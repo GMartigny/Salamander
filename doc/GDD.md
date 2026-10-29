@@ -87,16 +87,16 @@ To avoid repeating the color mechanism, patterns and details each evolve in a di
 
 ### Details: environment
 
-- Terrarium decorations increase the chance of certain details appearing (examples: pond → webbed, dark area → luminescent, plants → leafy).
+- The theme of a terrarium's decorations increases the chance of certain details appearing (examples: swamp → webbed, jungle → leafy).
 - Details: none, horned (*cornum*), webbed (*palmatum*), luminescent (*lucidum*), big eyes (*oculum*), dwarf (*pumilum*), leafy (*frondosum*).
 
-To decide: the fusion recipe table and the decoration → detail table.
+To decide: the fusion recipe table and the theme → detail table.
 
 ## Life cycle and breeding
 
 The terrarium is the breeding pen: the player chooses crosses by distributing males and females across terrariums.
 
-1. **Laying**: adults in the same terrarium have a chance to breed, as long as there is room. The delay between two layings is random within a range (example: 1 to 5 minutes). Better decorations increase this chance.
+1. **Laying**: adults in the same terrarium have a chance to breed, as long as there is room. The delay between two layings is random within a range (example: 1 to 5 minutes). The happiness of the pair sets this breeding rate.
 2. **Egg**: it incubates directly in the terrarium and takes up a slot.
 3. **Pupa**: intermediate stage before adulthood.
 4. **Adult**: final stage; the salamander never dies.
@@ -105,7 +105,12 @@ The terrarium is the breeding pen: the player chooses crosses by distributing ma
 - A full terrarium produces no more eggs. To continue, the player sells salamanders or buys a terrarium.
 - While offline, laying continues until the terrariums are full: a natural limit, with no artificial friction.
 
-To decide: incubation and pupa durations. Constraint: the first hatching must happen very quickly (lead: first laying in under a minute, egg 1 to 2 minutes, pupa about 5 minutes).
+### Happiness
+
+- Each salamander has a happiness level, which sets its breeding rate.
+- The quality of the decorations in its terrarium adds happiness.
+
+To decide: the happiness scale and how it converts into a breeding rate. Incubation and pupa durations. Constraint: the first hatching must happen very quickly (lead: first laying in under a minute, egg 1 to 2 minutes, pupa about 5 minutes).
 
 ## Economy
 
@@ -114,11 +119,20 @@ A single currency, **coins** (working name), is used for all purchases and sales
 - **Start**: the player begins with enough to buy a small terrarium and a pair of common salamanders.
 - **Specimen price**: based on its rarity. Rarity comes from the probability of the mutations that produced its traits, combined with the rarity of its detail.
 - **Terrariums**: the player can buy as many as they want. Their size sets the number of individuals.
-- **Decorations**: they increase the breeding chance, influence details and personalize the terrarium.
-- **Market**: it offers random salamanders, delivered after a short delay. The offer refreshes at a regular interval (example: every 10 minutes) and helps diversify genes.
+- **Decorations**: each has a theme (desert, swamp, jungle…) and a quality. The quality adds happiness and sets the price. The theme influences details and personalizes the terrarium.
 - **Special orders**: one or more salamanders with specific traits to deliver within a time limit, for an attractive coin reward.
 
-To decide: the numeric rarity of each color, pattern and detail, and the prices of terrariums and decorations.
+### Market
+
+The market has two sections, and both offers rotate at a regular interval (example: every 10 minutes).
+
+- **Specimens**: random salamanders, delivered after a short delay. They help diversify genes.
+- **Terrariums**:
+    - an additional terrarium;
+    - a larger terrarium, at an increasing price;
+    - decorations, with a rotating offer like the specimens.
+
+To decide: the numeric rarity of each color, pattern and detail, the terrarium price curve, the decoration quality scale and its prices, and the list of themes.
 
 ## Goals and encyclopedia
 
@@ -156,9 +170,10 @@ If the game goes public, avoid trademarked names ("the plumbers" rather than the
 
 - [ ] Numeric rarity of each color, each graph transition, each pattern and each detail
 - [ ] Pattern fusion recipes
-- [ ] Decoration → detail table
+- [ ] Theme → detail table, and the list of decoration themes
 - [ ] Durations: laying delay, incubation, pupa
-- [ ] Prices of terrariums, capacities and decorations
+- [ ] Prices: terrarium price curve, decoration quality scale and prices
+- [ ] Happiness scale and its conversion into a breeding rate
 - [ ] Full list of themed collections
 - [ ] Unify the color lists between the Brainstorm and the spreadsheet (neon green, light blue, cyan, lime green…)
 - [ ] Harmonize Latin names (endings, typos)

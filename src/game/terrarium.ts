@@ -1,12 +1,17 @@
-import type { DetailId } from "../data/details";
 import type { Salamander } from "./salamander";
 
-/** A decoration increases the breeding chance and favors certain details. */
+/** Decoration themes (list to be completed, see doc/GDD.md, "Economy"). */
+export type DecorationTheme = "desert" | "swamp" | "jungle";
+
+/**
+ * A decoration's quality adds happiness and sets its price;
+ * its theme favors certain details and personalizes the terrarium.
+ */
 export interface Decoration {
   id: string;
   name: string;
-  breedingBonus: number;
-  favoredDetails: DetailId[];
+  theme: DecorationTheme;
+  quality: number;
 }
 
 /** The terrarium is the breeding pen; eggs incubate inside and take up a slot. */
