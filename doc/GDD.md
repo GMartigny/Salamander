@@ -87,10 +87,21 @@ To avoid repeating the color mechanism, patterns and details each evolve in a di
 
 ### Details: environment
 
-- The theme of a terrarium's decorations increases the chance of certain details appearing (examples: swamp → webbed, jungle → leafy).
-- Details: none, horned (*cornum*), webbed (*palmatum*), luminescent (*lucidum*), big eyes (*oculum*), dwarf (*pumilum*), leafy (*frondosum*).
+The theme of a terrarium's decorations increases the chance of one detail appearing. Each theme favors exactly one detail.
 
-To decide: the fusion recipe table and the theme → detail table.
+| Decoration theme | Favored detail |
+| --- | --- |
+| Desert | Horned (*cornum*) |
+| Swamp | Webbed (*palmatum*) |
+| Cave | Luminescent (*lucidum*) |
+| Deep ocean | Big eyes (*oculum*) |
+| City | Dwarf (*pumilum*) |
+| Jungle | Leafy (*frondosum*) |
+
+- A terrarium with few decorations favors no pattern (*iustus*) instead of a detail.
+- With no theme influence, a salamander has no detail.
+
+To decide: the fusion recipe table, how the favored detail's chance scales with the number and quality of decorations, and what counts as "few decorations".
 
 ## Life cycle and breeding
 
@@ -119,7 +130,10 @@ A single currency, **coins** (working name), is used for all purchases and sales
 - **Start**: the player begins with enough to buy a small terrarium and a pair of common salamanders.
 - **Specimen price**: based on its rarity. Rarity comes from the probability of the mutations that produced its traits, combined with the rarity of its detail.
 - **Terrariums**: the player can buy as many as they want. Their size sets the number of individuals.
-- **Decorations**: each has a theme (desert, swamp, jungle…) and a quality. The quality adds happiness and sets the price. The theme influences details and personalizes the terrarium.
+- **Decorations**: each has a type, a theme and a quality. The quality adds happiness and sets the price. The theme influences details and personalizes the terrarium.
+    - Types: plant, rock, light, toy, shelter.
+    - Themes: desert, swamp, cave, deep ocean, city, jungle.
+    - Each type exists in every theme (example shelters: cattle skull in the desert, hollow stump in the swamp, crevice in the cave, shell in the deep ocean, tin can in the city, coconut in the jungle).
 - **Special orders**: one or more salamanders with specific traits to deliver within a time limit, for an attractive coin reward.
 
 ### Market
@@ -132,7 +146,7 @@ The market has two sections, and both offers rotate at a regular interval (examp
     - a larger terrarium, at an increasing price;
     - decorations, with a rotating offer like the specimens.
 
-To decide: the numeric rarity of each color, pattern and detail, the terrarium price curve, the decoration quality scale and its prices, and the list of themes.
+To decide: the numeric rarity of each color, pattern and detail, the terrarium price curve, and the decoration quality scale and its prices.
 
 ## Goals and encyclopedia
 
@@ -170,7 +184,7 @@ If the game goes public, avoid trademarked names ("the plumbers" rather than the
 
 - [ ] Numeric rarity of each color, each graph transition, each pattern and each detail
 - [ ] Pattern fusion recipes
-- [ ] Theme → detail table, and the list of decoration themes
+- [ ] Detail chance from decorations (number, quality) and the "few decorations" threshold
 - [ ] Durations: laying delay, incubation, pupa
 - [ ] Prices: terrarium price curve, decoration quality scale and prices
 - [ ] Happiness scale and its conversion into a breeding rate

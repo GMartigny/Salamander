@@ -1,15 +1,14 @@
+import type { DecorationTheme, DecorationType } from "../data/decorations";
 import type { Salamander } from "./salamander";
-
-/** Decoration themes (list to be completed, see doc/GDD.md, "Economy"). */
-export type DecorationTheme = "desert" | "swamp" | "jungle";
 
 /**
  * A decoration's quality adds happiness and sets its price;
- * its theme favors certain details and personalizes the terrarium.
+ * its theme favors one detail and personalizes the terrarium.
  */
 export interface Decoration {
   id: string;
   name: string;
+  type: DecorationType;
   theme: DecorationTheme;
   quality: number;
 }

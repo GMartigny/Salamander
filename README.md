@@ -22,7 +22,7 @@ npm run dev
 ```
 doc/          Game design document
 src/
-  data/       Game data: colors and mutation graph, patterns, details
+  data/       Game data: colors and mutation graph, patterns, details, decorations
   game/       Logic: salamanders, genetics, terrariums, game state
   render/     Procedural salamander drawing
   ui/         Screens (terrariums, market, orders, encyclopedia)
