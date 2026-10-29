@@ -67,12 +67,21 @@ Solid line: mutation possible both ways. Dotted line: very rare transition. The 
 
 White is the starting color. Black is the hub between greens, blues and brown.
 
-- **Rarity**: each color has its own rarity, independent of its distance from white. The chance of mutating to a color depends on the rarity of that target color.
-- **Silver and gold**: rare colors.
+- **Rarity**: each color has its own rarity, independent of its distance from white. When a color mutates, the target is picked among its neighbors, weighted by their rarity. Transitions have no rarity of their own.
 - **Transparent**: reachable only from white, with a very low probability.
 - **Chameleon**: linked to every color, with a very low probability. Its color changes constantly.
 
-To decide: the rarity value of each color.
+Temporary rarity weights (higher is more common), to tune by playing:
+
+| Weight | Colors |
+| --- | --- |
+| 100 (very common) | White |
+| 50 (common) | Yellow, orange, brown, pink, light blue, dark blue, light green, neon green, pine green |
+| 30 (bridge, slightly rarer) | Black, red |
+| 10 (rare) | Silver, gold, purple |
+| 1 (very rare) | Transparent, chameleon |
+
+The spreadsheet's color names map to the graph as follows: cyan is light blue, blue is dark blue, lime green is neon green.
 
 ## Patterns and details
 
@@ -84,6 +93,26 @@ To avoid repeating the color mechanism, patterns and details each evolve in a di
 - The player discovers these "recipes" by experimenting, which complements the randomness of colors.
 - Patterns: vertical lines (*recta*), zebra (*riga*), leaf (*folia*), clouds (*nuba*), splash (*macula*), dots (*puncta*), rings (*annula*), gradient (*progressa*), legs only (*gamba*), head only (*capita*), swirls (*voluta*), arrows (*sagitta*), star (*stella*), skull (*crania*).
 - No pattern (*iustus*): only the primary color is visible.
+
+Recipes (source: "Mélange des pattern" tab of the "Espèces" spreadsheet). Each result comes from exactly one recipe; parent order does not matter; a pair of the same pattern produces a different one (mutation). Vertical lines are the base pattern; dots and clouds are the bridges to the rarer patterns.
+
+| Parents | Result |
+| --- | --- |
+| Vertical lines + vertical lines | Zebra |
+| Vertical lines + zebra | Arrows |
+| Zebra + zebra | Rings |
+| Rings + rings | Dots |
+| Dots + dots | Clouds |
+| Clouds + clouds | Splash |
+| Vertical lines + clouds | Gradient |
+| Dots + rings | Star |
+| Clouds + arrows | Leaf |
+| Leaf + leaf | Swirls |
+| Rings + gradient | Legs only |
+| Legs only + legs only | Head only |
+| Dots + head only | Skull |
+
+Temporary pattern rarity weights: vertical lines 100 (very common), dots and clouds 30 (bridges), skull 1 (very rare), all others 50.
 
 ### Details: environment
 
@@ -98,18 +127,19 @@ The theme of a terrarium's decorations increases the chance of one detail appear
 | City | Dwarf (*pumilum*) |
 | Jungle | Leafy (*frondosum*) |
 
+- The detail can appear from 2 decorations of the same theme. Its chance then grows linearly up to 10% with all 5 decorations of that theme (2.5% with 2, 5% with 3, 7.5% with 4).
 - A terrarium with few decorations favors no pattern (*iustus*) instead of a detail.
 - With no theme influence, a salamander has no detail.
 
-To decide: the fusion recipe table, how the favored detail's chance scales with the number and quality of decorations, and what counts as "few decorations".
+To decide: what counts as "few decorations", and whether decoration quality also affects the detail chance.
 
 ## Life cycle and breeding
 
 The terrarium is the breeding pen: the player chooses crosses by distributing males and females across terrariums.
 
-1. **Laying**: adults in the same terrarium have a chance to breed, as long as there is room. The delay between two layings is random within a range (example: 1 to 5 minutes). The happiness of the pair sets this breeding rate.
-2. **Egg**: it incubates directly in the terrarium and takes up a slot.
-3. **Pupa**: intermediate stage before adulthood.
+1. **Laying**: adults in the same terrarium breed as long as there is room. The delay between two layings is random within a range set by happiness (see below).
+2. **Egg**: it incubates directly in the terrarium and takes up a slot. Incubation lasts 30 seconds.
+3. **Pupa**: intermediate stage before adulthood. It lasts 2 minutes.
 4. **Adult**: final stage; the salamander never dies.
 
 - Salamanders have a sex. If several pairs are possible in a terrarium, the male/female pair is drawn at random. Isolating a single pair forces a specific cross.
@@ -118,10 +148,18 @@ The terrarium is the breeding pen: the player chooses crosses by distributing ma
 
 ### Happiness
 
-- Each salamander has a happiness level, which sets its breeding rate.
-- The quality of the decorations in its terrarium adds happiness.
+- Each salamander has a happiness level, from 0 (base) to 1 (maximum), which sets its breeding rate.
+- A terrarium holds up to 5 decorations, one of each type. The quality of its decorations adds happiness. Maximum happiness = all 5 decorations of the same theme.
+- Each decoration outside the terrarium's main theme lowers happiness a little (temporary value: −0.05).
 
-To decide: the happiness scale and how it converts into a breeding rate. Incubation and pupa durations. Constraint: the first hatching must happen very quickly (lead: first laying in under a minute, egg 1 to 2 minutes, pupa about 5 minutes).
+| Happiness | Delay between two layings |
+| --- | --- |
+| 0 (base) | 3 to 5 minutes |
+| 1 (maximum) | 1 to 2 minutes |
+
+In between, both bounds of the range move linearly with happiness.
+
+To decide: the decoration quality scale and exactly how much happiness each quality level adds. The first hatching must stay quick for a new player (no decorations: first laying after 3 to 5 minutes, then 30 seconds of incubation).
 
 ## Economy
 
@@ -129,7 +167,14 @@ A single currency, **coins** (working name), is used for all purchases and sales
 
 - **Start**: the player begins with enough to buy a small terrarium and a pair of common salamanders.
 - **Specimen price**: based on its rarity. Rarity comes from the probability of the mutations that produced its traits, combined with the rarity of its detail.
-- **Terrariums**: the player can buy as many as they want. Their size sets the number of individuals.
+- **Terrariums**: the player can own up to 10. Their size sets the number of individuals, and each new terrarium costs 1.5 times the previous one (source: "Echelle de prix" tab of the "Espèces" spreadsheet).
+
+| Size | Capacity | 1st | 2nd | 3rd | … | 10th |
+| --- | --- | --- | --- | --- | --- | --- |
+| Small | 4 | 100 | 150 | 225 | … | 3,844 |
+| Medium | 7 | 1,000 | 1,500 | 2,250 | … | 38,443 |
+| Large | 10 | 10,000 | 15,000 | 22,500 | … | 384,434 |
+
 - **Decorations**: each has a type, a theme and a quality. The quality adds happiness and sets the price. The theme influences details and personalizes the terrarium.
     - Types: plant, rock, light, toy, shelter.
     - Themes: desert, swamp, cave, deep ocean, city, jungle.
@@ -146,7 +191,7 @@ The market has two sections, and both offers rotate at a regular interval (examp
     - a larger terrarium, at an increasing price;
     - decorations, with a rotating offer like the specimens.
 
-To decide: the numeric rarity of each color, pattern and detail, the terrarium price curve, and the decoration quality scale and its prices.
+To decide: whether the price rank counts all terrariums owned or only those of the same size, whether a "larger terrarium" replaces an existing one, and the decoration quality scale and its prices.
 
 ## Goals and encyclopedia
 
@@ -182,12 +227,10 @@ If the game goes public, avoid trademarked names ("the plumbers" rather than the
 
 ### To decide
 
-- [ ] Numeric rarity of each color, each graph transition, each pattern and each detail
-- [ ] Pattern fusion recipes
-- [ ] Detail chance from decorations (number, quality) and the "few decorations" threshold
-- [ ] Durations: laying delay, incubation, pupa
-- [ ] Prices: terrarium price curve, decoration quality scale and prices
-- [ ] Happiness scale and its conversion into a breeding rate
+- [ ] Species naming convention and Latin endings per group (color, pattern, detail)
+- [ ] Decoration quality scale: happiness per level and prices
+- [ ] Terrarium price rank (all terrariums or per size) and how upgrading to a larger one works
+- [ ] "Few decorations" threshold for no pattern (*iustus*)
+- [ ] Speed of the very first laying for a new player
 - [ ] Full list of themed collections
-- [ ] Unify the color lists between the Brainstorm and the spreadsheet (neon green, light blue, cyan, lime green…)
-- [ ] Harmonize Latin names (endings, typos)
+- [ ] Tune the temporary rarity weights by playing

@@ -1,6 +1,7 @@
 /**
  * Colors and mutation graph (see doc/GDD.md, "Colors and mutations").
- * Latin names come from the "Espèces" spreadsheet; those marked "to confirm" are still open.
+ * Latin names come from the "Espèces" spreadsheet (light blue = cyan, dark blue = blue, neon green = lime green).
+ * Their final form depends on the species naming convention, still to decide.
  */
 
 export const COLOR_IDS = [
@@ -29,26 +30,28 @@ export interface ColorDef {
   id: ColorId;
   name: string;
   latin: string;
+  /** Relative weight when a mutation picks this color: higher is more common (temporary values). */
+  weight: number;
 }
 
 export const COLORS: Record<ColorId, ColorDef> = {
-  white: { id: "white", name: "White", latin: "albus" },
-  silver: { id: "silver", name: "Silver", latin: "argenteus" },
-  gold: { id: "gold", name: "Gold", latin: "aureus" },
-  yellow: { id: "yellow", name: "Yellow", latin: "flavus" },
-  orange: { id: "orange", name: "Orange", latin: "rutilus" },
-  red: { id: "red", name: "Red", latin: "rubeus" },
-  brown: { id: "brown", name: "Brown", latin: "fuscus" },
-  pink: { id: "pink", name: "Pink", latin: "violaceus" },
-  purple: { id: "purple", name: "Purple", latin: "purpureus" },
-  lightBlue: { id: "lightBlue", name: "Light blue", latin: "azureus" }, // to confirm
-  darkBlue: { id: "darkBlue", name: "Dark blue", latin: "caeruleus" }, // to confirm
-  lightGreen: { id: "lightGreen", name: "Light green", latin: "viridis" },
-  neonGreen: { id: "neonGreen", name: "Neon green", latin: "citreus" }, // to confirm
-  pineGreen: { id: "pineGreen", name: "Pine green", latin: "prasinus" },
-  black: { id: "black", name: "Black", latin: "ebenus" },
-  transparent: { id: "transparent", name: "Transparent", latin: "vitreus" },
-  chameleon: { id: "chameleon", name: "Chameleon", latin: "talpus" }, // to confirm
+  white: { id: "white", name: "White", latin: "albus", weight: 100 },
+  silver: { id: "silver", name: "Silver", latin: "argenteus", weight: 10 },
+  gold: { id: "gold", name: "Gold", latin: "aureus", weight: 10 },
+  yellow: { id: "yellow", name: "Yellow", latin: "flavus", weight: 50 },
+  orange: { id: "orange", name: "Orange", latin: "rutilus", weight: 50 },
+  red: { id: "red", name: "Red", latin: "rubeus", weight: 30 },
+  brown: { id: "brown", name: "Brown", latin: "fuscus", weight: 50 },
+  pink: { id: "pink", name: "Pink", latin: "violaceus", weight: 50 },
+  purple: { id: "purple", name: "Purple", latin: "purpureus", weight: 10 },
+  lightBlue: { id: "lightBlue", name: "Light blue", latin: "azureus", weight: 50 },
+  darkBlue: { id: "darkBlue", name: "Dark blue", latin: "caeruleus", weight: 50 },
+  lightGreen: { id: "lightGreen", name: "Light green", latin: "viridis", weight: 50 },
+  neonGreen: { id: "neonGreen", name: "Neon green", latin: "citreus", weight: 50 },
+  pineGreen: { id: "pineGreen", name: "Pine green", latin: "prasinus", weight: 50 },
+  black: { id: "black", name: "Black", latin: "ebenus", weight: 30 },
+  transparent: { id: "transparent", name: "Transparent", latin: "vitreus", weight: 1 },
+  chameleon: { id: "chameleon", name: "Chameleon", latin: "talpus", weight: 1 },
 };
 
 /** Starting color of the game. */
