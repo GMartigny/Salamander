@@ -1,6 +1,6 @@
 /**
- * Patterns (voir doc/GDD.md, « Patterns : fusion »).
- * Les recettes de fusion restent à définir.
+ * Patterns (see doc/GDD.md, "Patterns: fusion").
+ * Fusion recipes are still to be defined.
  */
 
 export const PATTERN_IDS = [
@@ -24,31 +24,31 @@ export const PATTERN_IDS = [
 export type PatternId = (typeof PATTERN_IDS)[number];
 
 export const PATTERN_NAMES: Record<PatternId, string> = {
-  recta: "Lignes verticales",
-  riga: "Zébré",
-  folia: "Feuille",
-  nuba: "Nuages",
+  recta: "Vertical lines",
+  riga: "Zebra",
+  folia: "Leaf",
+  nuba: "Clouds",
   macula: "Splash",
-  puncta: "Points",
-  annula: "Anneaux",
-  progressa: "Dégradé",
-  gamba: "Pattes seules",
-  capita: "Tête seule",
-  voluta: "Volutes",
-  sagitta: "Flèches",
-  stella: "Étoile",
-  crania: "Crâne",
-  iustus: "Sans pattern",
+  puncta: "Dots",
+  annula: "Rings",
+  progressa: "Gradient",
+  gamba: "Legs only",
+  capita: "Head only",
+  voluta: "Swirls",
+  sagitta: "Arrows",
+  stella: "Star",
+  crania: "Skull",
+  iustus: "No pattern",
 };
 
-/** Recette de fusion : deux patterns parents peuvent donner un nouveau pattern. */
+/** Fusion recipe: two parent patterns can produce a new pattern. */
 export interface FusionRecipe {
   parents: readonly [PatternId, PatternId];
   result: PatternId;
   chance: number;
 }
 
-// TODO : définir les recettes (exemple tiré du GDD).
+// TODO: define the recipes (example taken from the GDD).
 export const FUSION_RECIPES: FusionRecipe[] = [
   { parents: ["puncta", "annula"], result: "stella", chance: 0.05 },
 ];

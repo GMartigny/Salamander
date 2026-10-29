@@ -1,9 +1,9 @@
 {
-  "name": "salamader",
+  "name": "salamander",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Jeu de collection et d'élevage de salamandres virtuelles",
+  "description": "Collection and breeding game of virtual salamanders",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

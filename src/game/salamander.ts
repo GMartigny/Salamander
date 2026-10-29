@@ -2,11 +2,11 @@ import type { ColorId } from "../data/colors";
 import type { DetailId } from "../data/details";
 import type { PatternId } from "../data/patterns";
 
-/** Les quatre gènes d'une salamandre (voir doc/GDD.md, « Génétique »). */
+/** The four genes of a salamander (see doc/GDD.md, "Genetics"). */
 export interface Genome {
-  /** Couleur de fond. */
+  /** Background color. */
   primary: ColorId;
-  /** Couleur du pattern ; toujours différente de la principale, sauf caméléon / caméléon. */
+  /** Pattern color; always differs from the primary, except chameleon / chameleon. */
   secondary: ColorId;
   pattern: PatternId;
   detail: DetailId;
@@ -14,7 +14,7 @@ export interface Genome {
 
 export type Sex = "male" | "female";
 
-/** Œuf → pupe → adulte ; l'adulte vit indéfiniment. */
+/** Egg → pupa → adult; adults live forever. */
 export type Stage = "egg" | "pupa" | "adult";
 
 export interface Salamander {
@@ -22,12 +22,12 @@ export interface Salamander {
   genome: Genome;
   sex: Sex;
   stage: Stage;
-  /** Horodatage (ms) du passage au stade courant. */
+  /** Timestamp (ms) when the current stage started. */
   stageSince: number;
 }
 
-/** Nom d'espèce latin, construit à partir des gènes. */
+/** Latin species name, built from the genes. */
 export function speciesName(_genome: Genome): string {
-  // TODO : définir l'ordre et l'accord des termes latins.
-  throw new Error("Non implémenté");
+  // TODO: define the order and agreement of the Latin terms.
+  throw new Error("Not implemented");
 }

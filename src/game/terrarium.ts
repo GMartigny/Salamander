@@ -1,7 +1,7 @@
 import type { DetailId } from "../data/details";
 import type { Salamander } from "./salamander";
 
-/** Une décoration augmente la chance de reproduction et favorise certains détails. */
+/** A decoration increases the breeding chance and favors certain details. */
 export interface Decoration {
   id: string;
   name: string;
@@ -9,7 +9,7 @@ export interface Decoration {
   favoredDetails: DetailId[];
 }
 
-/** Le terrarium sert d'enclos de reproduction ; les œufs y incubent et occupent une place. */
+/** The terrarium is the breeding pen; eggs incubate inside and take up a slot. */
 export interface Terrarium {
   id: string;
   capacity: number;

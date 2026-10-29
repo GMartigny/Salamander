@@ -1,16 +1,16 @@
 import type { Genome } from "./salamander";
 
-/** Source d'aléatoire injectable pour rendre les tirages testables. */
+/** Injectable randomness source, so draws can be tested. */
 export type Random = () => number;
 
 /**
- * Génome d'un petit à partir de ses parents (voir doc/GDD.md, « Hérédité des couleurs ») :
- * 1. couleur principale héritée puis mutation éventuelle ;
- * 2. couleur secondaire tirée sans la principale ;
- * 3. pool vide → mutation forcée vers une voisine.
- * Pattern par fusion, détail influencé par les décorations.
+ * Offspring genome from its parents (see doc/GDD.md, "Color inheritance"):
+ * 1. primary color inherited, then possibly mutated;
+ * 2. secondary color drawn without the primary;
+ * 3. empty pool → forced mutation to a neighbor.
+ * Pattern by fusion, detail influenced by decorations.
  */
 export function breed(_mother: Genome, _father: Genome, _random: Random = Math.random): Genome {
-  // TODO : implémenter une fois les raretés chiffrées.
-  throw new Error("Non implémenté");
+  // TODO: implement once rarities are quantified.
+  throw new Error("Not implemented");
 }

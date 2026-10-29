@@ -1,26 +1,26 @@
 /**
- * Couleurs et graphe des mutations (voir doc/GDD.md, « Couleurs et mutations »).
- * Les noms latins reprennent le tableau « Espèces » ; ceux marqués « à confirmer » restent à trancher.
+ * Colors and mutation graph (see doc/GDD.md, "Colors and mutations").
+ * Latin names come from the "Espèces" spreadsheet; those marked "to confirm" are still open.
  */
 
 export const COLOR_IDS = [
-  "blanc",
-  "argent",
-  "dore",
-  "jaune",
+  "white",
+  "silver",
+  "gold",
+  "yellow",
   "orange",
-  "rouge",
-  "marron",
-  "rose",
-  "violet",
-  "bleuClair",
-  "bleuFonce",
-  "vertClair",
-  "vertNeon",
-  "vertSapin",
-  "noir",
+  "red",
+  "brown",
+  "pink",
+  "purple",
+  "lightBlue",
+  "darkBlue",
+  "lightGreen",
+  "neonGreen",
+  "pineGreen",
+  "black",
   "transparent",
-  "cameleon",
+  "chameleon",
 ] as const;
 
 export type ColorId = (typeof COLOR_IDS)[number];
@@ -32,59 +32,59 @@ export interface ColorDef {
 }
 
 export const COLORS: Record<ColorId, ColorDef> = {
-  blanc: { id: "blanc", name: "Blanc", latin: "albus" },
-  argent: { id: "argent", name: "Argent", latin: "argenteus" },
-  dore: { id: "dore", name: "Doré", latin: "aureus" },
-  jaune: { id: "jaune", name: "Jaune", latin: "flavus" },
+  white: { id: "white", name: "White", latin: "albus" },
+  silver: { id: "silver", name: "Silver", latin: "argenteus" },
+  gold: { id: "gold", name: "Gold", latin: "aureus" },
+  yellow: { id: "yellow", name: "Yellow", latin: "flavus" },
   orange: { id: "orange", name: "Orange", latin: "rutilus" },
-  rouge: { id: "rouge", name: "Rouge", latin: "rubeus" },
-  marron: { id: "marron", name: "Marron", latin: "fuscus" },
-  rose: { id: "rose", name: "Rose", latin: "violaceus" },
-  violet: { id: "violet", name: "Violet", latin: "purpureus" },
-  bleuClair: { id: "bleuClair", name: "Bleu clair", latin: "azureus" }, // à confirmer
-  bleuFonce: { id: "bleuFonce", name: "Bleu foncé", latin: "caeruleus" }, // à confirmer
-  vertClair: { id: "vertClair", name: "Vert clair", latin: "viridis" },
-  vertNeon: { id: "vertNeon", name: "Vert néon", latin: "citreus" }, // à confirmer
-  vertSapin: { id: "vertSapin", name: "Vert sapin", latin: "prasinus" },
-  noir: { id: "noir", name: "Noir", latin: "ebenus" },
+  red: { id: "red", name: "Red", latin: "rubeus" },
+  brown: { id: "brown", name: "Brown", latin: "fuscus" },
+  pink: { id: "pink", name: "Pink", latin: "violaceus" },
+  purple: { id: "purple", name: "Purple", latin: "purpureus" },
+  lightBlue: { id: "lightBlue", name: "Light blue", latin: "azureus" }, // to confirm
+  darkBlue: { id: "darkBlue", name: "Dark blue", latin: "caeruleus" }, // to confirm
+  lightGreen: { id: "lightGreen", name: "Light green", latin: "viridis" },
+  neonGreen: { id: "neonGreen", name: "Neon green", latin: "citreus" }, // to confirm
+  pineGreen: { id: "pineGreen", name: "Pine green", latin: "prasinus" },
+  black: { id: "black", name: "Black", latin: "ebenus" },
   transparent: { id: "transparent", name: "Transparent", latin: "vitreus" },
-  cameleon: { id: "cameleon", name: "Caméléon", latin: "talpus" }, // à confirmer
+  chameleon: { id: "chameleon", name: "Chameleon", latin: "talpus" }, // to confirm
 };
 
-/** Couleur de départ du jeu. */
-export const STARTING_COLOR: ColorId = "blanc";
+/** Starting color of the game. */
+export const STARTING_COLOR: ColorId = "white";
 
-/** Couleur reliée à toutes les autres (transition très rare). */
-export const WILDCARD_COLOR: ColorId = "cameleon";
+/** Color linked to every other color (very rare transition). */
+export const WILDCARD_COLOR: ColorId = "chameleon";
 
 /**
- * Liens de mutation, valables dans les deux sens.
- * Le caméléon n'apparaît pas ici : il est relié à toutes les couleurs.
+ * Mutation links, valid both ways.
+ * The chameleon is not listed here: it is linked to every color.
  */
 export const MUTATION_LINKS: ReadonlyArray<readonly [ColorId, ColorId]> = [
-  ["blanc", "jaune"],
-  ["blanc", "vertClair"],
-  ["blanc", "argent"],
-  ["blanc", "bleuClair"],
-  ["blanc", "transparent"],
-  ["jaune", "orange"],
-  ["jaune", "vertNeon"],
-  ["vertClair", "vertSapin"],
-  ["argent", "noir"],
-  ["bleuClair", "bleuFonce"],
-  ["vertNeon", "vertSapin"],
-  ["vertSapin", "noir"],
-  ["noir", "bleuFonce"],
-  ["orange", "dore"],
-  ["orange", "rouge"],
-  ["bleuFonce", "violet"],
-  ["noir", "marron"],
-  ["rouge", "marron"],
-  ["rouge", "rose"],
-  ["violet", "rose"],
+  ["white", "yellow"],
+  ["white", "lightGreen"],
+  ["white", "silver"],
+  ["white", "lightBlue"],
+  ["white", "transparent"],
+  ["yellow", "orange"],
+  ["yellow", "neonGreen"],
+  ["lightGreen", "pineGreen"],
+  ["silver", "black"],
+  ["lightBlue", "darkBlue"],
+  ["neonGreen", "pineGreen"],
+  ["pineGreen", "black"],
+  ["black", "darkBlue"],
+  ["orange", "gold"],
+  ["orange", "red"],
+  ["darkBlue", "purple"],
+  ["black", "brown"],
+  ["red", "brown"],
+  ["red", "pink"],
+  ["purple", "pink"],
 ];
 
-/** Couleurs vers lesquelles `color` peut muter. */
+/** Colors that `color` can mutate into. */
 export function neighbors(color: ColorId): ColorId[] {
   if (color === WILDCARD_COLOR) {
     return COLOR_IDS.filter((id) => id !== WILDCARD_COLOR);

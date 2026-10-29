@@ -1,4 +1,4 @@
-# Rendu
+# Rendering
 
-Dessin procédural des salamandres à partir de leur génome (couleurs, pattern, détail).
-Pencil.js est envisagé, sans être obligatoire.
+Procedural drawing of salamanders from their genome (colors, pattern, detail).
+Pencil.js is being considered but not required.

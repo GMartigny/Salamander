@@ -1,164 +1,164 @@
-# Salamandres — Game Design Document
+# Salamanders — Game Design Document
 
-Version du 29/10/2026 · Guillaume Martigny
+Version of 2026-10-29 · Guillaume Martigny
 
 ## Vision
 
-Un jeu de collection où l'on élève de petites salamandres virtuelles et où l'on les croise pour faire apparaître des mutations rares. Le cœur du plaisir est l'aléatoire des mutations : chaque éclosion peut réserver une surprise.
+A collection game where you raise small virtual salamanders and crossbreed them to bring out rare mutations. The core of the fun is the randomness of mutations: every hatching can hold a surprise.
 
-- **Plateforme** : interface web responsive, jouable sur mobile en mode portrait.
-- **Genre** : idle game léger. La progression continue sans le joueur, sans friction artificielle et sans monnaie premium.
-- **Mode** : solo dans un premier temps.
-- **Visuels** : salamandres générées à partir de leurs gènes, même avec un rendu simple. Pencil.js est envisagé, sans être obligatoire.
+- **Platform**: responsive web interface, playable on mobile in portrait mode.
+- **Genre**: light idle game. Progress continues without the player, with no artificial friction and no premium currency.
+- **Mode**: single-player at first.
+- **Visuals**: salamanders generated from their genes, even with simple rendering. Pencil.js is being considered but not required.
 
-## Génétique
+## Genetics
 
-Chaque salamandre porte quatre gènes, chacun avec son propre mécanisme d'évolution. Chaque valeur a un nom latin, ce qui donne à chaque individu un nom d'espèce.
+Each salamander carries four genes, each with its own way of evolving. Every value has a Latin name, which gives each individual a species name.
 
-| Gène | Valeurs | Rôle visuel | Mécanisme |
+| Gene | Values | Visual role | Mechanism |
 | --- | --- | --- | --- |
-| Couleur principale | 17 | Couleur de fond | Mutation dans le graphe des couleurs |
-| Couleur secondaire | 17 | Couleur du pattern | Mutation dans le graphe des couleurs |
-| Pattern | 14 + sans pattern (*iustus*) | Motif sur le corps | Fusion de patterns entre parents |
-| Détail | 7 (dont aucun) | Trait physique | Influencé par les décorations du terrarium |
+| Primary color | 17 | Background color | Mutation in the color graph |
+| Secondary color | 17 | Pattern color | Mutation in the color graph |
+| Pattern | 14 + no pattern (*iustus*) | Motif on the body | Pattern fusion between parents |
+| Detail | 7 (including none) | Physical trait | Influenced by terrarium decorations |
 
-### Hérédité des couleurs
+### Color inheritance
 
-1. La couleur principale est tirée en premier : héritée d'un des parents, puis mutation éventuelle.
-2. La couleur secondaire est tirée parmi les couleurs des parents, en retirant du pool la couleur principale obtenue.
-3. Si le pool est vide, la secondaire mute de force vers une voisine dans le graphe.
+1. The primary color is drawn first: inherited from one parent, then possibly mutated.
+2. The secondary color is drawn from the parents' colors, with the resulting primary color removed from the pool.
+3. If the pool is empty, the secondary color is forced to mutate to a neighbor in the graph.
 
-- Principale et secondaire doivent être différentes, y compris pour un individu *iustus* dont la secondaire est cachée.
-- Seule exception : caméléon / caméléon est autorisé.
-- Un individu *iustus* transmet quand même sa couleur secondaire cachée. Elle peut réapparaître chez ses petits.
+- Primary and secondary colors must differ, including for an *iustus* individual whose secondary color is hidden.
+- Only exception: chameleon / chameleon is allowed.
+- An *iustus* individual still passes on its hidden secondary color. It can reappear in its offspring.
 
-Avec deux couleurs distinctes, on obtient environ 26 900 combinaisons visibles (17 × 16 × 14 × 7, plus les cas sans pattern).
+With two distinct colors, there are about 26,900 visible combinations (17 × 16 × 14 × 7, plus the no-pattern cases).
 
-## Couleurs et mutations
+## Colors and mutations
 
-À la naissance, chaque couleur héritée peut muter vers une couleur voisine dans le graphe. Les liens fonctionnent dans les deux sens.
+At birth, each inherited color can mutate to a neighboring color in the graph. Links work both ways.
 
 ```mermaid
 graph LR
-    blanc[Blanc] --- jaune[Jaune]
-    blanc --- vertClair[Vert clair]
-    blanc --- argent[Argent]
-    blanc --- bleuClair[Bleu clair]
-    blanc -.- transparent[Transparent]
-    jaune --- orange[Orange]
-    jaune --- vertNeon[Vert néon]
-    vertClair --- vertSapin[Vert sapin]
-    argent --- noir[Noir]
-    bleuClair --- bleuFonce[Bleu foncé]
-    vertNeon --- vertSapin
-    vertSapin --- noir
-    noir --- bleuFonce
-    orange --- dore[Doré]
-    orange --- rouge[Rouge]
-    bleuFonce --- violet[Violet]
-    noir --- marron[Marron]
-    rouge --- marron
-    rouge --- rose[Rose]
-    violet --- rose
-    cameleon[Caméléon]
+    white[White] --- yellow[Yellow]
+    white --- lightGreen[Light green]
+    white --- silver[Silver]
+    white --- lightBlue[Light blue]
+    white -.- transparent[Transparent]
+    yellow --- orange[Orange]
+    yellow --- neonGreen[Neon green]
+    lightGreen --- pineGreen[Pine green]
+    silver --- black[Black]
+    lightBlue --- darkBlue[Dark blue]
+    neonGreen --- pineGreen
+    pineGreen --- black
+    black --- darkBlue
+    orange --- gold[Gold]
+    orange --- red[Red]
+    darkBlue --- purple[Purple]
+    black --- brown[Brown]
+    red --- brown
+    red --- pink[Pink]
+    purple --- pink
+    chameleon[Chameleon]
 ```
 
-Trait plein : mutation possible dans les deux sens. Pointillés : transition très rare. Le caméléon est relié à toutes les couleurs (non dessiné), avec une transition très rare.
+Solid line: mutation possible both ways. Dotted line: very rare transition. The chameleon is linked to every color (not drawn), with a very rare transition.
 
-Le blanc est la couleur de départ. Le noir sert de carrefour entre les verts, les bleus et le marron.
+White is the starting color. Black is the hub between greens, blues and brown.
 
-- **Rareté** : chaque couleur a sa propre rareté, indépendante de sa distance au blanc. La chance de mutation vers une couleur dépend de la rareté de cette couleur cible.
-- **Argent et doré** : couleurs rares.
-- **Transparent** : accessible uniquement depuis le blanc, avec une probabilité très faible.
-- **Caméléon** : relié à toutes les couleurs, avec une probabilité très faible. Sa couleur change en permanence.
+- **Rarity**: each color has its own rarity, independent of its distance from white. The chance of mutating to a color depends on the rarity of that target color.
+- **Silver and gold**: rare colors.
+- **Transparent**: reachable only from white, with a very low probability.
+- **Chameleon**: linked to every color, with a very low probability. Its color changes constantly.
 
-À trancher : la valeur de rareté de chaque couleur.
+To decide: the rarity value of each color.
 
-## Patterns et détails
+## Patterns and details
 
-Pour éviter de répéter la mécanique des couleurs, patterns et détails évoluent chacun d'une façon différente.
+To avoid repeating the color mechanism, patterns and details each evolve in a different way.
 
-### Patterns : fusion
+### Patterns: fusion
 
-- Croiser deux parents aux patterns précis peut donner un nouveau pattern (exemple : points + anneaux → étoile).
-- Le joueur découvre ces « recettes » par l'expérimentation, ce qui complète l'aléatoire des couleurs.
-- Patterns : lignes verticales (*recta*), zébré (*riga*), feuille (*folia*), nuages (*nuba*), splash (*macula*), points (*puncta*), anneaux (*annula*), dégradé (*progressa*), pattes seules (*gamba*), tête seule (*capita*), volutes (*voluta*), flèches (*sagitta*), étoile (*stella*), crâne (*crania*).
-- Sans pattern (*iustus*) : seule la couleur principale est visible.
+- Crossing two parents with specific patterns can produce a new pattern (example: dots + rings → star).
+- The player discovers these "recipes" by experimenting, which complements the randomness of colors.
+- Patterns: vertical lines (*recta*), zebra (*riga*), leaf (*folia*), clouds (*nuba*), splash (*macula*), dots (*puncta*), rings (*annula*), gradient (*progressa*), legs only (*gamba*), head only (*capita*), swirls (*voluta*), arrows (*sagitta*), star (*stella*), skull (*crania*).
+- No pattern (*iustus*): only the primary color is visible.
 
-### Détails : environnement
+### Details: environment
 
-- Les décorations du terrarium augmentent la chance d'apparition de certains détails (exemples : bassin → palmé, zone sombre → luminescent, plantes → feuillu).
-- Détails : aucun, corné (*cornum*), palmé (*palmatum*), luminescent (*lucidum*), gros yeux (*oculum*), nain (*pumilum*), feuillu (*frondosum*).
+- Terrarium decorations increase the chance of certain details appearing (examples: pond → webbed, dark area → luminescent, plants → leafy).
+- Details: none, horned (*cornum*), webbed (*palmatum*), luminescent (*lucidum*), big eyes (*oculum*), dwarf (*pumilum*), leafy (*frondosum*).
 
-À trancher : la table des recettes de fusion et la table décoration → détail.
+To decide: the fusion recipe table and the decoration → detail table.
 
-## Cycle de vie et reproduction
+## Life cycle and breeding
 
-Le terrarium sert d'enclos de reproduction : le joueur choisit ses croisements en répartissant mâles et femelles entre ses terrariums.
+The terrarium is the breeding pen: the player chooses crosses by distributing males and females across terrariums.
 
-1. **Ponte** : les adultes d'un même terrarium ont une chance de se reproduire, tant qu'il reste de la place. Le délai entre deux pontes est aléatoire dans une plage (exemple : 1 à 5 minutes). La qualité des décorations augmente cette chance.
-2. **Œuf** : il incube directement dans le terrarium et occupe une place.
-3. **Pupe** : stade intermédiaire avant l'âge adulte.
-4. **Adulte** : stade définitif, la salamandre ne meurt pas.
+1. **Laying**: adults in the same terrarium have a chance to breed, as long as there is room. The delay between two layings is random within a range (example: 1 to 5 minutes). Better decorations increase this chance.
+2. **Egg**: it incubates directly in the terrarium and takes up a slot.
+3. **Pupa**: intermediate stage before adulthood.
+4. **Adult**: final stage; the salamander never dies.
 
-- Les salamandres sont sexuées. S'il y a plusieurs couples possibles dans un terrarium, la paire mâle/femelle est tirée au hasard. Isoler un couple seul permet de forcer un croisement.
-- Un terrarium plein ne produit plus d'œufs. Pour continuer, le joueur vend des salamandres ou achète un terrarium.
-- Hors ligne, la ponte continue jusqu'à ce que les terrariums soient pleins : c'est une limite naturelle, sans friction artificielle.
+- Salamanders have a sex. If several pairs are possible in a terrarium, the male/female pair is drawn at random. Isolating a single pair forces a specific cross.
+- A full terrarium produces no more eggs. To continue, the player sells salamanders or buys a terrarium.
+- While offline, laying continues until the terrariums are full: a natural limit, with no artificial friction.
 
-À trancher : les durées d'incubation et de pupe. Contrainte : la première éclosion doit arriver très vite (piste : première ponte en moins d'une minute, œuf 1 à 2 minutes, pupe environ 5 minutes).
+To decide: incubation and pupa durations. Constraint: the first hatching must happen very quickly (lead: first laying in under a minute, egg 1 to 2 minutes, pupa about 5 minutes).
 
-## Économie
+## Economy
 
-Une monnaie unique, les **pièces** (nom provisoire), sert à tous les achats et toutes les ventes.
+A single currency, **coins** (working name), is used for all purchases and sales.
 
-- **Départ** : le joueur commence avec de quoi acheter un petit terrarium et un couple de salamandres communes.
-- **Prix d'un spécimen** : calculé à partir de sa rareté. La rareté découle de la probabilité des mutations qui ont produit ses traits, combinée à la rareté de son détail.
-- **Terrariums** : le joueur peut en acheter autant qu'il veut. Leur taille fixe le nombre d'individus.
-- **Décorations** : elles augmentent la chance de reproduction, influencent les détails et personnalisent le terrarium.
-- **Marché** : il propose des salamandres aléatoires, livrées après un court délai. L'offre se renouvelle à intervalle régulier (exemple : toutes les 10 minutes) et permet de diversifier les gènes.
-- **Commandes spéciales** : une ou plusieurs salamandres aux traits précis à livrer dans un délai imparti, contre une récompense en pièces intéressante.
+- **Start**: the player begins with enough to buy a small terrarium and a pair of common salamanders.
+- **Specimen price**: based on its rarity. Rarity comes from the probability of the mutations that produced its traits, combined with the rarity of its detail.
+- **Terrariums**: the player can buy as many as they want. Their size sets the number of individuals.
+- **Decorations**: they increase the breeding chance, influence details and personalize the terrarium.
+- **Market**: it offers random salamanders, delivered after a short delay. The offer refreshes at a regular interval (example: every 10 minutes) and helps diversify genes.
+- **Special orders**: one or more salamanders with specific traits to deliver within a time limit, for an attractive coin reward.
 
-À trancher : la rareté chiffrée de chaque couleur, pattern et détail, et les prix des terrariums et décorations.
+To decide: the numeric rarity of each color, pattern and detail, and the prices of terrariums and decorations.
 
-## Objectifs et encyclopédie
+## Goals and encyclopedia
 
-Le joueur a toujours un objectif à chacun de trois horizons, et l'encyclopédie porte la sensation de complétion.
+The player always has a goal at each of three horizons, and the encyclopedia carries the feeling of completion.
 
-| Horizon | Objectif | Récompense |
+| Horizon | Goal | Reward |
 | --- | --- | --- |
-| Court terme | Commandes spéciales | Pièces |
-| Moyen terme | Compléter une collection thématique | Récompense dédiée |
-| Long terme | Compléter l'encyclopédie, avec un taux global en % | Prestige |
+| Short term | Special orders | Coins |
+| Medium term | Complete a themed collection | Dedicated reward |
+| Long term | Complete the encyclopedia, with an overall % rate | Prestige |
 
-### Encyclopédie
+### Encyclopedia
 
-- Chaque combinaison découverte est enregistrée.
-- Des pages par couleur, par pattern et par détail rendent la progression lisible malgré les ~26 900 combinaisons.
+- Every discovered combination is recorded.
+- Pages by color, by pattern and by detail make progress readable despite the ~26,900 combinations.
 
-### Collections thématiques
+### Themed collections
 
-Chaque collection regroupe 5 à 10 salamandres précises, avec des références amusantes. Pistes :
+Each collection groups 5 to 10 specific salamanders, with fun references. Ideas:
 
-- **Fêtes** : Halloween (*crania* orange sur noir), Saint-Patrick (*folia* vert sur vert clair), Noël…
-- **Drapeaux** : France, Italie, Jamaïque…
-- **Pop culture** : rasta (*nuba* rouge, vert, jaune), les plombiers (*gamba* rouge et *gamba* verte)…
-- **Nature** : zèbre (*riga* noir sur blanc), coccinelle, abeille…
-- **Feux et couleurs** : feu tricolore, arc-en-ciel…
+- **Holidays**: Halloween (*crania* orange on black), Saint Patrick's Day (*folia* green on light green), Christmas…
+- **Flags**: France, Italy, Jamaica…
+- **Pop culture**: rasta (*nuba* red, green, yellow), the plumbers (red *gamba* and green *gamba*)…
+- **Nature**: zebra (*riga* black on white), ladybug, bee…
+- **Lights and colors**: traffic light, rainbow…
 
-Si le jeu devient public, éviter les noms de marques déposées (« les plombiers » plutôt que les noms des personnages).
+If the game goes public, avoid trademarked names ("the plumbers" rather than the characters' names).
 
-## Technique et points ouverts
+## Technical and open points
 
-- **Rendu** : salamandres dessinées de façon procédurale à partir des gènes. Il y a un ancien prototype statique : [gmartigny.github.io/salamander](https://gmartigny.github.io/salamander/).
-- **Sources** : Brainstorm, tableau « Espèces » et dessin « Couleurs » dans le dossier Drive du projet.
+- **Rendering**: salamanders drawn procedurally from their genes. There is an old static prototype: [gmartigny.github.io/salamander](https://gmartigny.github.io/salamander/).
+- **Sources**: Brainstorm, "Espèces" spreadsheet and "Couleurs" drawing in the project's Drive folder.
 
-### À trancher
+### To decide
 
-- [ ] Rareté chiffrée de chaque couleur, de chaque transition du graphe, de chaque pattern et de chaque détail
-- [ ] Recettes de fusion des patterns
-- [ ] Table décoration → détail
-- [ ] Durées : délai de ponte, incubation, pupe
-- [ ] Prix des terrariums, des capacités et des décorations
-- [ ] Liste complète des collections thématiques
-- [ ] Unifier les listes de couleurs entre le Brainstorm et le tableau (vert néon, bleu clair, cyan, vert citron…)
-- [ ] Harmoniser les noms latins (terminaisons, coquilles)
+- [ ] Numeric rarity of each color, each graph transition, each pattern and each detail
+- [ ] Pattern fusion recipes
+- [ ] Decoration → detail table
+- [ ] Durations: laying delay, incubation, pupa
+- [ ] Prices of terrariums, capacities and decorations
+- [ ] Full list of themed collections
+- [ ] Unify the color lists between the Brainstorm and the spreadsheet (neon green, light blue, cyan, lime green…)
+- [ ] Harmonize Latin names (endings, typos)

@@ -1,10 +1,10 @@
 /**
- * Détails (voir doc/GDD.md, « Détails : environnement »).
- * Leur apparition est influencée par les décorations du terrarium.
+ * Details (see doc/GDD.md, "Details: environment").
+ * Their appearance is influenced by terrarium decorations.
  */
 
 export const DETAIL_IDS = [
-  "aucun",
+  "none",
   "cornum",
   "palmatum",
   "lucidum",
@@ -16,11 +16,11 @@ export const DETAIL_IDS = [
 export type DetailId = (typeof DETAIL_IDS)[number];
 
 export const DETAIL_NAMES: Record<DetailId, string> = {
-  aucun: "Aucun",
-  cornum: "Corné",
-  palmatum: "Palmé",
+  none: "None",
+  cornum: "Horned",
+  palmatum: "Webbed",
   lucidum: "Luminescent",
-  oculum: "Gros yeux",
-  pumilum: "Nain",
-  frondosum: "Feuillu",
+  oculum: "Big eyes",
+  pumilum: "Dwarf",
+  frondosum: "Leafy",
 };

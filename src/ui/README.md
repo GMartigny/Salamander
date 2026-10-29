@@ -1,3 +1,3 @@
 # Interface
 
-Écrans du jeu, pensés d'abord pour le mobile en portrait : terrariums, marché, commandes spéciales, encyclopédie.
+Game screens, designed mobile-first in portrait: terrariums, market, special orders, encyclopedia.

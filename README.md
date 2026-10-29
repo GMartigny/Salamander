@@ -1,10 +1,10 @@
-# Salamandres
+# Salamanders
 
-Jeu de collection où l'on élève et croise de petites salamandres virtuelles pour faire apparaître des mutations rares. Web responsive, jouable sur mobile en portrait, façon idle game sans friction.
+A collection game where you raise and crossbreed small virtual salamanders to bring out rare mutations. Responsive web, playable on mobile in portrait, idle-style with no friction.
 
-Le game design est décrit dans [doc/GDD.md](doc/GDD.md).
+The game design is described in [doc/GDD.md](doc/GDD.md).
 
-## Démarrer
+## Getting started
 
 ```sh
 npm install
@@ -13,18 +13,18 @@ npm run dev
 
 ## Scripts
 
-- `npm run dev` : serveur de développement
-- `npm run build` : vérification des types puis build de production
-- `npm test` : tests unitaires (Vitest)
+- `npm run dev`: development server
+- `npm run build`: type check, then production build
+- `npm test`: unit tests (Vitest)
 
 ## Structure
 
 ```
 doc/          Game design document
 src/
-  data/       Données du jeu : couleurs et graphe des mutations, patterns, détails
-  game/       Logique : salamandres, génétique, terrariums, état de la partie
-  render/     Dessin procédural des salamandres
-  ui/         Écrans (terrariums, marché, commandes, encyclopédie)
-  main.ts     Point d'entrée
+  data/       Game data: colors and mutation graph, patterns, details
+  game/       Logic: salamanders, genetics, terrariums, game state
+  render/     Procedural salamander drawing
+  ui/         Screens (terrariums, market, orders, encyclopedia)
+  main.ts     Entry point
 ```
