@@ -2,30 +2,22 @@ import { describe, expect, it } from "vitest";
 import { FUSION_RECIPES, fusionResult, PATTERN_IDS } from "./patterns";
 
 describe("pattern fusion", () => {
-  it("never gives the same result for two recipes", () => {
-    const results = FUSION_RECIPES.map((recipe) => recipe.result);
-    expect(new Set(results).size).toBe(results.length);
-  });
-
   it("never lists the same pair twice", () => {
     const pairs = FUSION_RECIPES.map(({ parents }) => [...parents].sort().join("+"));
     expect(new Set(pairs).size).toBe(pairs.length);
   });
 
-  it("makes every pattern except recta and iustus reachable from recta", () => {
-    const known = new Set(["recta"]);
-    let grew = true;
-    while (grew) {
-      grew = false;
-      for (const { parents, result } of FUSION_RECIPES) {
-        if (parents.every((p) => known.has(p)) && !known.has(result)) {
-          known.add(result);
-          grew = true;
-        }
-      }
+  it("never repeats a result among recipes sharing a parent", () => {
+    for (const pattern of PATTERN_IDS) {
+      const results = FUSION_RECIPES.filter(({ parents }) => parents.includes(pattern)).map((r) => r.result);
+      expect(new Set(results).size, pattern).toBe(results.length);
     }
-    const expected = PATTERN_IDS.filter((id) => id !== "iustus");
-    expect([...known].sort()).toEqual([...expected].sort());
+  });
+
+  it("leaves crania as the only end of chain", () => {
+    const parents = new Set(FUSION_RECIPES.flatMap((recipe) => recipe.parents));
+    const deadEnds = PATTERN_IDS.filter((id) => id !== "iustus" && !parents.has(id));
+    expect(deadEnds).toEqual(["crania"]);
   });
 
   it("ignores parent order", () => {

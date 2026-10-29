@@ -34,6 +34,44 @@ Each salamander carries four genes, each with its own way of evolving. Every val
 
 With two distinct colors, there are about 26,900 visible combinations (17 × 16 × 14 × 7, plus the no-pattern cases).
 
+### Species names
+
+Each salamander gets a Latin-sounding name of two or three words. It follows the spirit of scientific names without their strict rules: no genus, and each word has its own ending so the player can tell the genes apart.
+
+| Word | Gene | Ending | Example |
+| --- | --- | --- | --- |
+| 1st | Primary color | -us | *Albus* (white) |
+| 2nd | Secondary color + pattern, joined | -o + -ata | *rubropunctata* (red dots) |
+| 3rd | Detail | -um | *cornum* (horned) |
+
+- Example: *Albus rubropunctata cornum*, a white salamander with red dots and horns.
+- No pattern: the hidden secondary color is left out (*Aureus nudata*).
+- No detail: the third word is left out (*Ebenus flavostrigata*).
+
+| Color | Word | Combining form |
+| --- | --- | --- |
+| White | albus | albo- |
+| Silver | argenteus | argenteo- |
+| Gold | aureus | aureo- |
+| Yellow | flavus | flavo- |
+| Orange | rutilus | rutilo- |
+| Red | rubeus | rubro- |
+| Brown | fuscus | fusco- |
+| Pink | roseus | roseo- |
+| Purple | purpureus | purpureo- |
+| Light blue | azureus | azureo- |
+| Dark blue | caeruleus | caeruleo- |
+| Light green | viridus | virido- |
+| Neon green | citreus | citreo- |
+| Pine green | prasinus | prasino- |
+| Black | ebenus | ebeno- |
+| Transparent | vitreus | vitreo- |
+| Chameleon | mutabilus | mutabilo- |
+
+Patterns: vertical lines *lineata*, zebra *strigata*, leaf *foliata*, clouds *nebulata*, splash *maculata*, dots *punctata*, rings *annulata*, gradient *gradata*, legs only *gambata*, head only *capitata*, swirls *volutata*, arrows *sagittata*, star *stellata*, skull *craniata*, no pattern *nudata*.
+
+Details keep their Latin name: *cornum*, *palmatum*, *lucidum*, *oculum*, *pumilum*, *frondosum*.
+
 ## Colors and mutations
 
 At birth, each inherited color can mutate to a neighboring color in the graph. Links work both ways.
@@ -94,7 +132,7 @@ To avoid repeating the color mechanism, patterns and details each evolve in a di
 - Patterns: vertical lines (*recta*), zebra (*riga*), leaf (*folia*), clouds (*nuba*), splash (*macula*), dots (*puncta*), rings (*annula*), gradient (*progressa*), legs only (*gamba*), head only (*capita*), swirls (*voluta*), arrows (*sagitta*), star (*stella*), skull (*crania*).
 - No pattern (*iustus*): only the primary color is visible.
 
-Recipes (source: "Mélange des pattern" tab of the "Espèces" spreadsheet). Each result comes from exactly one recipe; parent order does not matter; a pair of the same pattern produces a different one (mutation). Vertical lines are the base pattern; dots and clouds are the bridges to the rarer patterns.
+Recipes (source: "Mélange des pattern" tab of the "Espèces" spreadsheet). Parent order does not matter, and a pair of the same pattern produces a different one (mutation). A result never appears twice among the recipes that share a parent. Every pattern leads to another one, except the skull, the end of the chain. Dots and clouds are the bridges to the rarer patterns. Any pattern can also be bought at the market, so the chain does not need a single starting point.
 
 | Parents | Result |
 | --- | --- |
@@ -111,6 +149,9 @@ Recipes (source: "Mélange des pattern" tab of the "Espèces" spreadsheet). Each
 | Rings + gradient | Legs only |
 | Legs only + legs only | Head only |
 | Dots + head only | Skull |
+| Splash + splash | Dots |
+| Swirls + swirls | Clouds |
+| Star + star | Splash |
 
 Temporary pattern rarity weights: vertical lines 100 (very common), dots and clouds 30 (bridges), skull 1 (very rare), all others 50.
 
@@ -159,7 +200,9 @@ The terrarium is the breeding pen: the player chooses crosses by distributing ma
 
 In between, both bounds of the range move linearly with happiness.
 
-To decide: the decoration quality scale and exactly how much happiness each quality level adds. The first hatching must stay quick for a new player (no decorations: first laying after 3 to 5 minutes, then 30 seconds of incubation).
+The very first laying of a new game is forced to happen after 10 seconds, so a new player sees a hatching within a minute.
+
+To decide: the decoration quality scale and exactly how much happiness each quality level adds.
 
 ## Economy
 
@@ -191,7 +234,9 @@ The market has two sections, and both offers rotate at a regular interval (examp
     - a larger terrarium, at an increasing price;
     - decorations, with a rotating offer like the specimens.
 
-To decide: whether the price rank counts all terrariums owned or only those of the same size, whether a "larger terrarium" replaces an existing one, and the decoration quality scale and its prices.
+The price rank counts all terrariums owned, whatever their size: a 3rd terrarium costs the 3rd price of its size.
+
+To decide: whether buying a larger terrarium replaces an existing one, and the decoration quality scale and its prices.
 
 ## Goals and encyclopedia
 
@@ -227,10 +272,8 @@ If the game goes public, avoid trademarked names ("the plumbers" rather than the
 
 ### To decide
 
-- [ ] Species naming convention and Latin endings per group (color, pattern, detail)
 - [ ] Decoration quality scale: happiness per level and prices
-- [ ] Terrarium price rank (all terrariums or per size) and how upgrading to a larger one works
+- [ ] Whether buying a larger terrarium replaces an existing one
 - [ ] "Few decorations" threshold for no pattern (*iustus*)
-- [ ] Speed of the very first laying for a new player
 - [ ] Full list of themed collections
 - [ ] Tune the temporary rarity weights by playing

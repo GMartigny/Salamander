@@ -1,6 +1,6 @@
-import type { ColorId } from "../data/colors";
+import { COLORS, type ColorId } from "../data/colors";
 import type { DetailId } from "../data/details";
-import type { PatternId } from "../data/patterns";
+import { PATTERNS, type PatternId } from "../data/patterns";
 
 /** The four genes of a salamander (see doc/GDD.md, "Genetics"). */
 export interface Genome {
@@ -28,8 +28,15 @@ export interface Salamander {
   stageSince: number;
 }
 
-/** Latin species name, built from the genes. */
-export function speciesName(_genome: Genome): string {
-  // TODO: define the order and agreement of the Latin terms.
-  throw new Error("Not implemented");
+/**
+ * Latin species name (see doc/GDD.md, "Species names"):
+ * primary color (-us), secondary color + pattern (-o + -ata), detail (-um), e.g. "Albus rubropunctata cornum".
+ * Without a pattern, the hidden secondary color is left out ("nudata"); without a detail, the last word is left out.
+ */
+export function speciesName({ primary, secondary, pattern, detail }: Genome): string {
+  const first = COLORS[primary].latin;
+  const second = pattern === "iustus" ? PATTERNS.iustus.latin : COLORS[secondary].prefix + PATTERNS[pattern].latin;
+  const words = [first.charAt(0).toUpperCase() + first.slice(1), second];
+  if (detail !== "none") words.push(detail);
+  return words.join(" ");
 }

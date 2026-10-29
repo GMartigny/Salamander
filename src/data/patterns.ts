@@ -26,26 +26,28 @@ export type PatternId = (typeof PATTERN_IDS)[number];
 export interface PatternDef {
   id: PatternId;
   name: string;
+  /** Word used in species names, always ending in -ata. */
+  latin: string;
   /** Relative weight, higher is more common (temporary values). */
   weight: number;
 }
 
 export const PATTERNS: Record<PatternId, PatternDef> = {
-  recta: { id: "recta", name: "Vertical lines", weight: 100 },
-  riga: { id: "riga", name: "Zebra", weight: 50 },
-  folia: { id: "folia", name: "Leaf", weight: 50 },
-  nuba: { id: "nuba", name: "Clouds", weight: 30 },
-  macula: { id: "macula", name: "Splash", weight: 50 },
-  puncta: { id: "puncta", name: "Dots", weight: 30 },
-  annula: { id: "annula", name: "Rings", weight: 50 },
-  progressa: { id: "progressa", name: "Gradient", weight: 50 },
-  gamba: { id: "gamba", name: "Legs only", weight: 50 },
-  capita: { id: "capita", name: "Head only", weight: 50 },
-  voluta: { id: "voluta", name: "Swirls", weight: 50 },
-  sagitta: { id: "sagitta", name: "Arrows", weight: 50 },
-  stella: { id: "stella", name: "Star", weight: 50 },
-  crania: { id: "crania", name: "Skull", weight: 1 },
-  iustus: { id: "iustus", name: "No pattern", weight: 50 },
+  recta: { id: "recta", name: "Vertical lines", latin: "lineata", weight: 100 },
+  riga: { id: "riga", name: "Zebra", latin: "strigata", weight: 50 },
+  folia: { id: "folia", name: "Leaf", latin: "foliata", weight: 50 },
+  nuba: { id: "nuba", name: "Clouds", latin: "nebulata", weight: 30 },
+  macula: { id: "macula", name: "Splash", latin: "maculata", weight: 50 },
+  puncta: { id: "puncta", name: "Dots", latin: "punctata", weight: 30 },
+  annula: { id: "annula", name: "Rings", latin: "annulata", weight: 50 },
+  progressa: { id: "progressa", name: "Gradient", latin: "gradata", weight: 50 },
+  gamba: { id: "gamba", name: "Legs only", latin: "gambata", weight: 50 },
+  capita: { id: "capita", name: "Head only", latin: "capitata", weight: 50 },
+  voluta: { id: "voluta", name: "Swirls", latin: "volutata", weight: 50 },
+  sagitta: { id: "sagitta", name: "Arrows", latin: "sagittata", weight: 50 },
+  stella: { id: "stella", name: "Star", latin: "stellata", weight: 50 },
+  crania: { id: "crania", name: "Skull", latin: "craniata", weight: 1 },
+  iustus: { id: "iustus", name: "No pattern", latin: "nudata", weight: 50 },
 };
 
 /** Fusion recipe: crossing these two parent patterns can produce a new pattern. */
@@ -55,7 +57,8 @@ export interface FusionRecipe {
 }
 
 /**
- * Each result appears in exactly one recipe. Recta is the base pattern and never a result.
+ * A result never appears twice among the recipes that share a parent (same row or column of the spreadsheet).
+ * Every pattern leads somewhere, except crania, the end of the chain.
  * Dots (puncta) and clouds (nuba) are the bridges that lead to the rarer patterns.
  */
 export const FUSION_RECIPES: readonly FusionRecipe[] = [
@@ -72,6 +75,9 @@ export const FUSION_RECIPES: readonly FusionRecipe[] = [
   { parents: ["annula", "progressa"], result: "gamba" },
   { parents: ["gamba", "gamba"], result: "capita" },
   { parents: ["puncta", "capita"], result: "crania" },
+  { parents: ["macula", "macula"], result: "puncta" },
+  { parents: ["voluta", "voluta"], result: "nuba" },
+  { parents: ["stella", "stella"], result: "macula" },
 ];
 
 /** Pattern produced by fusing two parent patterns, if a recipe exists (order does not matter). */

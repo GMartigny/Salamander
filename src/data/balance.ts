@@ -13,6 +13,9 @@ export const LAYING_DELAY = {
   happy: [1 * MINUTE, 2 * MINUTE],
 } as const;
 
+/** The very first laying of a new game is forced to happen quickly. */
+export const FIRST_LAYING_DELAY = 10 * SECOND;
+
 export const INCUBATION_DURATION = 30 * SECOND;
 export const PUPA_DURATION = 2 * MINUTE;
 
@@ -41,7 +44,7 @@ export const TERRARIUM_PRICE_FACTOR = 1.5;
 
 export const MAX_TERRARIUMS = 10;
 
-/** Price of the n-th terrarium (1-based) of a given size. */
+/** Price of a terrarium of a given size, when it is the n-th terrarium owned (1-based, all sizes counted). */
 export function terrariumPrice(size: TerrariumSize, n: number): number {
   return TERRARIUM_SIZES[size].basePrice * TERRARIUM_PRICE_FACTOR ** (n - 1);
 }
