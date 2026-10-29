@@ -132,26 +132,25 @@ To avoid repeating the color mechanism, patterns and details each evolve in a di
 - Patterns: vertical lines (*recta*), zebra (*riga*), leaf (*folia*), clouds (*nuba*), splash (*macula*), dots (*puncta*), rings (*annula*), gradient (*progressa*), legs only (*gamba*), head only (*capita*), swirls (*voluta*), arrows (*sagitta*), star (*stella*), skull (*crania*).
 - No pattern (*iustus*): only the primary color is visible.
 
-Recipes (source: "Mélange des pattern" tab of the "Espèces" spreadsheet). Parent order does not matter, and a pair of the same pattern produces a different one (mutation). A result never appears twice among the recipes that share a parent. Every pattern leads to another one, except the skull, the end of the chain. Dots and clouds are the bridges to the rarer patterns. Any pattern can also be bought at the market, so the chain does not need a single starting point.
+Recipes (source: "Mélange des pattern" tab of the "Espèces" spreadsheet). Parent order does not matter. Most recipes mix two different patterns; a pair of the same pattern can also produce a different one (mutation), but that stays rare. A result never appears twice among the recipes that share a parent. Every pattern leads to another one, except the skull, the end of the chain. Dots and clouds are the bridges to the rarer patterns. Any pattern can also be bought at the market, so the chain does not need a single starting point.
 
 | Parents | Result |
 | --- | --- |
 | Vertical lines + vertical lines | Zebra |
 | Vertical lines + zebra | Arrows |
-| Zebra + zebra | Rings |
-| Rings + rings | Dots |
-| Dots + dots | Clouds |
-| Clouds + clouds | Splash |
 | Vertical lines + clouds | Gradient |
+| Zebra + dots | Rings |
+| Rings + splash | Dots |
+| Dots + gradient | Clouds |
+| Clouds + dots | Splash |
 | Dots + rings | Star |
 | Clouds + arrows | Leaf |
-| Leaf + leaf | Swirls |
+| Leaf + rings | Swirls |
 | Rings + gradient | Legs only |
 | Legs only + legs only | Head only |
 | Dots + head only | Skull |
-| Splash + splash | Dots |
-| Swirls + swirls | Clouds |
-| Star + star | Splash |
+| Swirls + splash | Clouds |
+| Star + arrows | Splash |
 
 Temporary pattern rarity weights: vertical lines 100 (very common), dots and clouds 30 (bridges), skull 1 (very rare), all others 50.
 

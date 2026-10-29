@@ -20,6 +20,11 @@ describe("pattern fusion", () => {
     expect(deadEnds).toEqual(["crania"]);
   });
 
+  it("keeps same-pattern pairs rare", () => {
+    const same = FUSION_RECIPES.filter(({ parents: [a, b] }) => a === b);
+    expect(same.length).toBeLessThanOrEqual(2);
+  });
+
   it("ignores parent order", () => {
     expect(fusionResult("annula", "puncta")).toBe("stella");
     expect(fusionResult("puncta", "annula")).toBe("stella");

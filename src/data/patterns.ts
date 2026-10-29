@@ -64,20 +64,19 @@ export interface FusionRecipe {
 export const FUSION_RECIPES: readonly FusionRecipe[] = [
   { parents: ["recta", "recta"], result: "riga" },
   { parents: ["recta", "riga"], result: "sagitta" },
-  { parents: ["riga", "riga"], result: "annula" },
-  { parents: ["annula", "annula"], result: "puncta" },
-  { parents: ["puncta", "puncta"], result: "nuba" },
-  { parents: ["nuba", "nuba"], result: "macula" },
   { parents: ["recta", "nuba"], result: "progressa" },
+  { parents: ["riga", "puncta"], result: "annula" },
+  { parents: ["annula", "macula"], result: "puncta" },
+  { parents: ["puncta", "progressa"], result: "nuba" },
+  { parents: ["nuba", "puncta"], result: "macula" },
   { parents: ["puncta", "annula"], result: "stella" },
   { parents: ["nuba", "sagitta"], result: "folia" },
-  { parents: ["folia", "folia"], result: "voluta" },
+  { parents: ["folia", "annula"], result: "voluta" },
   { parents: ["annula", "progressa"], result: "gamba" },
   { parents: ["gamba", "gamba"], result: "capita" },
   { parents: ["puncta", "capita"], result: "crania" },
-  { parents: ["macula", "macula"], result: "puncta" },
-  { parents: ["voluta", "voluta"], result: "nuba" },
-  { parents: ["stella", "stella"], result: "macula" },
+  { parents: ["voluta", "macula"], result: "nuba" },
+  { parents: ["stella", "sagitta"], result: "macula" },
 ];
 
 /** Pattern produced by fusing two parent patterns, if a recipe exists (order does not matter). */
