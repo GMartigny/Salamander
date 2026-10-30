@@ -30,13 +30,14 @@ export interface Salamander {
 
 /**
  * Latin species name (see doc/GDD.md, "Species names"):
- * primary color (-us), secondary color + pattern (-o + -ata), detail (-um), e.g. "Albus rubropunctata cornum".
+ * primary color (-us), secondary color + pattern (-o + -ata), detail (-um), e.g. "Albus Rubeopunctata Cornum".
  * Without a pattern, the hidden secondary color is left out ("nudata"); without a detail, the last word is left out.
  */
 export function speciesName({ primary, secondary, pattern, detail }: Genome): string {
-  const first = COLORS[primary].latin;
-  const second = pattern === "iustus" ? PATTERNS.iustus.latin : COLORS[secondary].prefix + PATTERNS[pattern].latin;
-  const words = [first.charAt(0).toUpperCase() + first.slice(1), second];
+  const words = [
+    COLORS[primary].latin,
+    pattern === "iustus" ? PATTERNS.iustus.latin : COLORS[secondary].prefix + PATTERNS[pattern].latin,
+  ];
   if (detail !== "none") words.push(detail);
-  return words.join(" ");
+  return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 }

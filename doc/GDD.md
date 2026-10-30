@@ -41,12 +41,13 @@ Each salamander gets a Latin-sounding name of two or three words. It follows the
 | Word | Gene | Ending | Example |
 | --- | --- | --- | --- |
 | 1st | Primary color | -us | *Albus* (white) |
-| 2nd | Secondary color + pattern, joined | -o + -ata | *rubropunctata* (red dots) |
-| 3rd | Detail | -um | *cornum* (horned) |
+| 2nd | Secondary color + pattern, joined | -o + -ata | *Rubeopunctata* (red dots) |
+| 3rd | Detail | -um | *Cornum* (horned) |
 
-- Example: *Albus rubropunctata cornum*, a white salamander with red dots and horns.
-- No pattern: the hidden secondary color is left out (*Aureus nudata*).
-- No detail: the third word is left out (*Ebenus flavostrigata*).
+- Example: *Albus Rubeopunctata Cornum*, a white salamander with red dots and horns.
+- Each word starts with a capital letter. The combining form of a color is its word with -us replaced by -o.
+- No pattern: the hidden secondary color is left out (*Aureus Nudata*).
+- No detail: the third word is left out (*Ebenus Flavostrigata*).
 
 | Color | Word | Combining form |
 | --- | --- | --- |
@@ -55,7 +56,7 @@ Each salamander gets a Latin-sounding name of two or three words. It follows the
 | Gold | aureus | aureo- |
 | Yellow | flavus | flavo- |
 | Orange | rutilus | rutilo- |
-| Red | rubeus | rubro- |
+| Red | rubeus | rubeo- |
 | Brown | fuscus | fusco- |
 | Pink | roseus | roseo- |
 | Purple | purpureus | purpureo- |
@@ -264,13 +265,9 @@ The player always has a goal at each of three horizons, and the encyclopedia car
 
 ### Themed collections
 
-Each collection groups 5 to 10 specific salamanders, with fun references. Ideas:
+Each collection groups 2 to 8 specific salamanders that refer to a real group. A salamander belongs to at most one collection. The full list, with the species name of each member, is in the "Collections" tab of the "Espèces" spreadsheet: 24 collections, 105 salamanders.
 
-- **Holidays**: Halloween (*crania* orange on black), Saint Patrick's Day (*folia* green on light green), Christmas…
-- **Flags**: France, Italy, Jamaica…
-- **Pop culture**: rasta (*nuba* red, green, yellow), the plumbers (red *gamba* and green *gamba*)…
-- **Nature**: zebra (*riga* black on white), ladybug, bee…
-- **Lights and colors**: traffic light, rainbow…
+Examples: ninja salamanders, the plumbers, traffic light, European flags, rasta, rainbow, Halloween, Christmas, the four elements, solar system, gemstones, coats (zebra, tiger, leopard…), insects, sentai, blue elves, the seven dwarfs, maze ghosts, Olympic rings, podium, fruit basket, yin and yang, made-up rockers, helmeted duo, antenna toddlers.
 
 If the game goes public, avoid trademarked names ("the plumbers" rather than the characters' names).
 
@@ -281,5 +278,4 @@ If the game goes public, avoid trademarked names ("the plumbers" rather than the
 
 ### To decide
 
-- [ ] Full list of themed collections
 - [ ] Tune the temporary rarity weights by playing

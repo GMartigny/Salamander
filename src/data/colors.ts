@@ -31,7 +31,7 @@ export interface ColorDef {
   name: string;
   /** Word used for the primary color in species names, always ending in -us. */
   latin: string;
-  /** Combining form used before the pattern for the secondary color, always ending in -o. */
+  /** Combining form used before the pattern for the secondary color: the word with -us replaced by -o. */
   prefix: string;
   /** Relative weight when a mutation picks this color: higher is more common (temporary values). */
   weight: number;
@@ -43,7 +43,7 @@ export const COLORS: Record<ColorId, ColorDef> = {
   gold: { id: "gold", name: "Gold", latin: "aureus", prefix: "aureo", weight: 10 },
   yellow: { id: "yellow", name: "Yellow", latin: "flavus", prefix: "flavo", weight: 50 },
   orange: { id: "orange", name: "Orange", latin: "rutilus", prefix: "rutilo", weight: 50 },
-  red: { id: "red", name: "Red", latin: "rubeus", prefix: "rubro", weight: 30 },
+  red: { id: "red", name: "Red", latin: "rubeus", prefix: "rubeo", weight: 30 },
   brown: { id: "brown", name: "Brown", latin: "fuscus", prefix: "fusco", weight: 50 },
   pink: { id: "pink", name: "Pink", latin: "roseus", prefix: "roseo", weight: 50 },
   purple: { id: "purple", name: "Purple", latin: "purpureus", prefix: "purpureo", weight: 10 },
