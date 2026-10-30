@@ -2,6 +2,8 @@
 
 A collection game (playable prototype) where you raise and crossbreed small virtual salamanders to bring out rare mutations. Responsive web, playable on mobile in portrait, idle-style with no friction.
 
+Play it at [salamander-five.vercel.app](https://salamander-five.vercel.app/), deployed on Vercel.
+
 The game design is described in [doc/GDD.md](doc/GDD.md).
 
 ## Getting started
