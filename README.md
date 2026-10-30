@@ -1,6 +1,6 @@
 # Salamanders
 
-A collection game where you raise and crossbreed small virtual salamanders to bring out rare mutations. Responsive web, playable on mobile in portrait, idle-style with no friction.
+A collection game (playable prototype) where you raise and crossbreed small virtual salamanders to bring out rare mutations. Responsive web, playable on mobile in portrait, idle-style with no friction.
 
 The game design is described in [doc/GDD.md](doc/GDD.md).
 

@@ -69,3 +69,33 @@ export const TERRARIUM_UPGRADES: Record<TerrariumSize, TerrariumSize | null> = {
 export function terrariumPrice(size: TerrariumSize, n: number): number {
   return TERRARIUM_SIZES[size].basePrice * TERRARIUM_PRICE_FACTOR ** (n - 1);
 }
+
+/** Chance for each inherited color to mutate to a neighbor in the graph. */
+export const MUTATION_CHANCE = 0.1;
+
+/** Chance that two parent patterns with a recipe produce the recipe's result. */
+export const FUSION_CHANCE = 0.7;
+
+/** Chance to inherit a parent's detail when the terrarium's theme gives none. */
+export const DETAIL_INHERIT_CHANCE = 0.2;
+
+/** Chance of no pattern (iustus) in a terrarium with few decorations. */
+export const FEW_DECORATIONS_IUSTUS_CHANCE = 0.1;
+
+/** Price of the most common salamander; rarer traits multiply it. */
+export const BASE_SPECIMEN_PRICE = 20;
+
+/** Price multiplier for a salamander with a detail. */
+export const DETAIL_PRICE_FACTOR = 3;
+
+/** Share of the price received when selling. */
+export const SELL_RATIO = 0.5;
+
+export const MARKET = {
+  rotation: 10 * MINUTE,
+  specimens: 4,
+  /** Low-rarity specimens always offered: one male and one female. */
+  lowRarity: 2,
+  decorations: 3,
+  delivery: 30 * SECOND,
+} as const;

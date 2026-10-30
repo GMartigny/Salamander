@@ -1,11 +1,267 @@
 :root {
+  --bg: #f3efe4;
+  --card: #fffdf7;
+  --ink: #2b2a26;
+  --muted: #77736a;
+  --accent: #2f7d5b;
+  --line: #e2dccd;
   font-family: system-ui, sans-serif;
-  color-scheme: light dark;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1f1d;
+    --card: #262a27;
+    --ink: #ecebe6;
+    --muted: #a19d93;
+    --line: #3a3f3b;
+    --accent: #5cbf8f;
+  }
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  padding: 16px;
+  background: var(--bg);
+}
+
+#app {
   max-width: 480px;
-  margin-inline: auto;
+  margin: 0 auto;
+  padding: 0 16px 88px;
+}
+
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  background: var(--bg);
+}
+
+h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+h2 {
+  font-size: 16px;
+  margin: 20px 0 8px;
+}
+
+h2 small {
+  font-weight: normal;
+  color: var(--muted);
+}
+
+.coins {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.meta,
+.empty-state {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+button,
+select {
+  font: inherit;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+button.danger {
+  margin-top: 24px;
+  color: #c0392b;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.card.wide {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.salamander-card {
+  cursor: pointer;
+}
+
+.salamander-card.selected {
+  outline: 2px solid var(--accent);
+}
+
+.salamander-card.pending {
+  opacity: 0.55;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 13px;
+  font-style: italic;
+  word-break: break-word;
+}
+
+svg.salamander {
+  width: 100%;
+  height: 110px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.terrarium {
+  margin-top: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.terrarium header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+meter {
+  width: 100px;
+  vertical-align: middle;
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.slot {
+  font-size: 10px;
+  padding: 6px 4px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 56px;
+}
+
+.slot.empty {
+  border-style: dashed;
+  color: var(--muted);
+  justify-content: center;
+  text-align: center;
+}
+
+.slot button {
+  font-size: 10px;
+  padding: 2px 4px;
+}
+
+.stars {
+  color: #d9a92e;
+}
+
+.theme-desert { border-left: 4px solid #e0b46a; }
+.theme-swamp { border-left: 4px solid #6b8e4e; }
+.theme-cave { border-left: 4px solid #6d6a8a; }
+.theme-deepOcean { border-left: 4px solid #2f5fb3; }
+.theme-city { border-left: 4px solid #8a8f96; }
+.theme-jungle { border-left: 4px solid #2f9e44; }
+
+.species {
+  padding-left: 18px;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.tabs {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+  background: var(--card);
+  border-top: 1px solid var(--line);
+}
+
+.tabs button {
+  flex: 1;
+  white-space: nowrap;
+  max-width: 160px;
+  border: none;
+}
+
+.tabs button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.toast {
+  position: fixed;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #c0392b;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
 }

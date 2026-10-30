@@ -22,8 +22,6 @@ export interface Salamander {
   genome: Genome;
   sex: Sex;
   stage: Stage;
-  /** Sets the breeding rate; raised by the quality of the terrarium's decorations. */
-  happiness: number;
   /** Timestamp (ms) when the current stage started. */
   stageSince: number;
 }

@@ -38,6 +38,3 @@ export const THEME_DETAILS: Record<DecorationTheme, Exclude<DetailId, "none">> =
   city: "pumilum",
   jungle: "frondosum",
 };
-
-// A terrarium with few decorations favors no pattern (iustus) instead of a detail.
-// TODO: define the "few decorations" threshold.

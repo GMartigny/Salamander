@@ -271,6 +271,25 @@ Examples: ninja salamanders, the plumbers, traffic light, European flags, rasta,
 
 If the game goes public, avoid trademarked names ("the plumbers" rather than the characters' names).
 
+## Prototype values
+
+Temporary values used by the first playable version, to tune by playing.
+
+| Rule | Value |
+| --- | --- |
+| Chance for each inherited color to mutate | 10% |
+| Chance of fusion when the parents' patterns have a recipe | 70% |
+| Chance to inherit a parent's detail (when the theme gives none) | 20% |
+| Chance of no pattern in a terrarium with at most 1 decoration | 10% |
+| Price of the most common salamander | 20 coins, multiplied by the rarity of each trait |
+| Price multiplier with a detail | ×3 |
+| Selling price | 50% of the purchase price |
+| Starting coins | 220 (a small terrarium and a common pair) |
+| Market | 4 specimens (always a common female and male, plus 2 drawn by rarity), 3 decorations, new offer every 10 minutes, delivery in 30 seconds |
+| Themed collection reward | Coins only |
+
+The prototype leaves out special orders and themed collections.
+
 ## Technical and open points
 
 - **Rendering**: salamanders drawn procedurally from their genes. There is an old static prototype: [gmartigny.github.io/salamander](https://gmartigny.github.io/salamander/).
