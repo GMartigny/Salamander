@@ -168,10 +168,9 @@ The theme of a terrarium's decorations increases the chance of one detail appear
 | Jungle | Leafy (*frondosum*) |
 
 - The detail can appear from 2 decorations of the same theme. Its chance then grows linearly up to 10% with all 5 decorations of that theme (2.5% with 2, 5% with 3, 7.5% with 4).
-- A terrarium with few decorations favors no pattern (*iustus*) instead of a detail.
+- A terrarium with at most 1 decoration favors no pattern (*iustus*) instead of a detail.
 - With no theme influence, a salamander has no detail.
-
-To decide: what counts as "few decorations", and whether decoration quality also affects the detail chance.
+- Decoration quality does not affect the detail chance: only the number of same-theme decorations counts.
 
 ## Life cycle and breeding
 
@@ -189,8 +188,15 @@ The terrarium is the breeding pen: the player chooses crosses by distributing ma
 ### Happiness
 
 - Each salamander has a happiness level, from 0 (base) to 1 (maximum), which sets its breeding rate.
-- A terrarium holds up to 5 decorations, one of each type. The quality of its decorations adds happiness. Maximum happiness = all 5 decorations of the same theme.
+- A terrarium holds up to 5 decorations, one of each type. Each decoration adds happiness according to its quality level.
+- Maximum happiness = all 5 decorations of the same theme, at quality 3.
 - Each decoration outside the terrarium's main theme lowers happiness a little (temporary value: −0.05).
+
+| Decoration quality | Happiness added (temporary) |
+| --- | --- |
+| 1 | 0.10 |
+| 2 | 0.15 |
+| 3 | 0.20 |
 
 | Happiness | Delay between two layings |
 | --- | --- |
@@ -201,26 +207,31 @@ In between, both bounds of the range move linearly with happiness.
 
 The very first laying of a new game is forced to happen after 10 seconds, so a new player sees a hatching within a minute.
 
-To decide: the decoration quality scale and exactly how much happiness each quality level adds.
-
 ## Economy
 
 A single currency, **coins** (working name), is used for all purchases and sales.
 
 - **Start**: the player begins with enough to buy a small terrarium and a pair of common salamanders.
 - **Specimen price**: based on its rarity. Rarity comes from the probability of the mutations that produced its traits, combined with the rarity of its detail.
-- **Terrariums**: the player can own up to 10. Their size sets the number of individuals, and each new terrarium costs 1.5 times the previous one (source: "Echelle de prix" tab of the "Espèces" spreadsheet).
+- **Terrariums**: the player can own up to 10. A terrarium is always bought small, then upgraded in place to medium, then large: it keeps its inhabitants and decorations. Each new terrarium costs 1.5 times the previous one, and its upgrades follow the same rank (source: "Echelle de prix" tab of the "Espèces" spreadsheet).
 
-| Size | Capacity | 1st | 2nd | 3rd | … | 10th |
+| Size | Capacity | Price (purchase or upgrade) for the 1st | 2nd | 3rd | … | 10th |
 | --- | --- | --- | --- | --- | --- | --- |
 | Small | 4 | 100 | 150 | 225 | … | 3,844 |
 | Medium | 7 | 1,000 | 1,500 | 2,250 | … | 38,443 |
 | Large | 10 | 10,000 | 15,000 | 22,500 | … | 384,434 |
 
-- **Decorations**: each has a type, a theme and a quality. The quality adds happiness and sets the price. The theme influences details and personalizes the terrarium.
+- **Decorations**: each has a type, a theme and a quality. The theme influences details and personalizes the terrarium.
     - Types: plant, rock, light, toy, shelter.
     - Themes: desert, swamp, cave, deep ocean, city, jungle.
-    - Each type exists in every theme (example shelters: cattle skull in the desert, hollow stump in the swamp, crevice in the cave, shell in the deep ocean, tin can in the city, coconut in the jungle).
+    - Each type exists in every theme, which makes 30 decorations (example shelters: cattle skull in the desert, hollow stump in the swamp, crevice in the cave, shell in the deep ocean, tin can in the city, coconut in the jungle).
+    - A decoration is bought at quality 1, then upgraded in place to quality 2, then 3. Quality adds happiness. Visually, the same drawing gets a better finish (worn, new, shiny).
+
+| Decoration | Price (temporary) |
+| --- | --- |
+| Purchase (quality 1) | 50 |
+| Upgrade to quality 2 | 150 |
+| Upgrade to quality 3 | 450 |
 - **Special orders**: one or more salamanders with specific traits to deliver within a time limit, for an attractive coin reward.
 
 ### Market
@@ -229,13 +240,11 @@ The market has two sections, and both offers rotate at a regular interval (examp
 
 - **Specimens**: random salamanders, delivered after a short delay. They help diversify genes.
 - **Terrariums**:
-    - an additional terrarium;
-    - a larger terrarium, at an increasing price;
-    - decorations, with a rotating offer like the specimens.
+    - an additional small terrarium;
+    - upgrades of an owned terrarium to the next size;
+    - decorations at quality 1, with a rotating offer like the specimens; upgrades of owned decorations are always available.
 
-The price rank counts all terrariums owned, whatever their size: a 3rd terrarium costs the 3rd price of its size.
-
-To decide: whether buying a larger terrarium replaces an existing one, and the decoration quality scale and its prices.
+The price rank counts all terrariums owned: the 3rd terrarium costs 225 to buy, then 2,250 to upgrade to medium and 22,500 to upgrade to large.
 
 ## Goals and encyclopedia
 
@@ -251,6 +260,7 @@ The player always has a goal at each of three horizons, and the encyclopedia car
 
 - Every discovered combination is recorded.
 - Pages by color, by pattern and by detail make progress readable despite the ~26,900 combinations.
+- A decorations page lists the 30 decorations, with the highest quality reached for each.
 
 ### Themed collections
 
@@ -271,8 +281,5 @@ If the game goes public, avoid trademarked names ("the plumbers" rather than the
 
 ### To decide
 
-- [ ] Decoration quality scale: happiness per level and prices
-- [ ] Whether buying a larger terrarium replaces an existing one
-- [ ] "Few decorations" threshold for no pattern (*iustus*)
 - [ ] Full list of themed collections
 - [ ] Tune the temporary rarity weights by playing

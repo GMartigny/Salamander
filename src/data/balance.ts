@@ -22,6 +22,17 @@ export const PUPA_DURATION = 2 * MINUTE;
 /** Decoration slots per terrarium (one per decoration type). */
 export const MAX_DECORATIONS = 5;
 
+export type DecorationQuality = 1 | 2 | 3;
+
+/** Happiness added by one decoration, by quality (5 decorations at quality 3 = maximum happiness 1). */
+export const DECORATION_HAPPINESS: Record<DecorationQuality, number> = { 1: 0.1, 2: 0.15, 3: 0.2 };
+
+/** Purchase price at quality 1, then the price of each upgrade. */
+export const DECORATION_PRICES = { purchase: 50, upgradeTo2: 150, upgradeTo3: 450 } as const;
+
+/** A terrarium with at most this many decorations favors no pattern (iustus). */
+export const FEW_DECORATIONS_MAX = 1;
+
 /** Happiness lost for each decoration outside the terrarium's main theme (happiness ranges 0 to 1). */
 export const MIXED_THEME_PENALTY = 0.05;
 
@@ -44,7 +55,17 @@ export const TERRARIUM_PRICE_FACTOR = 1.5;
 
 export const MAX_TERRARIUMS = 10;
 
-/** Price of a terrarium of a given size, when it is the n-th terrarium owned (1-based, all sizes counted). */
+/** Terrariums are bought small, then upgraded in place to medium, then large. */
+export const TERRARIUM_UPGRADES: Record<TerrariumSize, TerrariumSize | null> = {
+  small: "medium",
+  medium: "large",
+  large: null,
+};
+
+/**
+ * Price to buy (small) or upgrade to (medium, large) the n-th terrarium owned (1-based).
+ * Upgrades follow the rank of the terrarium they apply to.
+ */
 export function terrariumPrice(size: TerrariumSize, n: number): number {
   return TERRARIUM_SIZES[size].basePrice * TERRARIUM_PRICE_FACTOR ** (n - 1);
 }
