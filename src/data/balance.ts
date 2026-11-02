@@ -23,7 +23,7 @@ export const GESTATION_DURATION = 30 * SECOND;
 export const REST_DURATION = 1 * MINUTE;
 
 export const INCUBATION_DURATION = 30 * SECOND;
-export const PUPA_DURATION = 2 * MINUTE;
+export const PUPA_DURATION = 1 * MINUTE;
 
 /** Decoration slots per terrarium (one per decoration type). */
 export const MAX_DECORATIONS = 5;
@@ -101,7 +101,7 @@ export const DETAIL_PRICE_FACTOR = 3;
 export const SELL_RATIO = 0.5;
 
 export const MARKET = {
-  rotation: 10 * MINUTE,
+  rotation: 5 * MINUTE,
   specimens: 4,
   /** Low-rarity specimens always offered: one male and one female. */
   lowRarity: 2,

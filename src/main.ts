@@ -1,5 +1,13 @@
 import "./style.css";
-import { DECORATION_HAPPINESS, DECORATION_PRICES, MAX_DECORATIONS, MAX_TERRARIUMS, TERRARIUM_SIZES } from "./data/balance";
+import {
+  DECORATION_HAPPINESS,
+  DECORATION_PRICES,
+  INCUBATION_DURATION,
+  MAX_DECORATIONS,
+  MAX_TERRARIUMS,
+  PUPA_DURATION,
+  TERRARIUM_SIZES,
+} from "./data/balance";
 import { DECORATION_THEME_NAMES, DECORATION_THEMES, DECORATION_TYPE_NAMES, DECORATION_TYPES, type DecorationType } from "./data/decorations";
 import {
   advance,
@@ -60,8 +68,8 @@ function countdown(until: number): string {
 }
 
 function stageEnd(s: Salamander): number | null {
-  if (s.stage === "egg") return s.stageSince + 30_000;
-  if (s.stage === "pupa") return s.stageSince + 120_000;
+  if (s.stage === "egg") return s.stageSince + INCUBATION_DURATION;
+  if (s.stage === "pupa") return s.stageSince + PUPA_DURATION;
   return null;
 }
 

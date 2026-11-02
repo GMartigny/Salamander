@@ -180,7 +180,7 @@ The terrarium is the breeding pen: the player chooses crosses by distributing ma
 1. **Mating**: an adult female sharing a terrarium with an adult male gets pregnant after a random delay set by happiness (see below). One male can fertilize several females.
 2. **Pregnancy**: the female carries the father's genes for 30 seconds of gestation, then lays the egg as soon as the terrarium has a free slot. A pregnant female keeps her pregnancy when moved: the terrarium where she lays decides the detail. After laying, she rests 1 minute before she can mate again.
 3. **Egg**: it incubates directly in the terrarium and takes up a slot. Incubation lasts 30 seconds.
-4. **Pupa**: intermediate stage before adulthood. It lasts 2 minutes.
+4. **Pupa**: intermediate stage before adulthood. It lasts 1 minute.
 5. **Adult**: final stage; the salamander never dies.
 
 - Salamanders have a sex. If several pairs are possible in a terrarium, the male/female pair is drawn at random. Isolating a single pair forces a specific cross.
@@ -240,7 +240,7 @@ A decoration can be sold back for 50% of everything spent on it (purchase and up
 
 ### Market
 
-The market has two sections, and both offers rotate at a regular interval (example: every 10 minutes).
+The market has two sections, and both offers rotate every 5 minutes.
 
 - **Specimens**: random salamanders, delivered after a short delay. They help diversify genes.
 - **Terrariums**:
@@ -289,7 +289,7 @@ Temporary values used by the first playable version, to tune by playing.
 | Price multiplier with a detail | ×3 |
 | Selling price | 50% of the purchase price |
 | Starting coins | 220 (a small terrarium and a common pair) |
-| Market | 4 specimens (always a common female and male, plus 2 drawn by rarity), 3 decorations, new offer every 10 minutes, delivery in 30 seconds |
+| Market | 4 specimens (always a common female and male, plus 2 drawn by rarity), 3 decorations, new offer every 5 minutes, delivery in 30 seconds |
 | Themed collection reward | Coins only |
 
 The prototype leaves out special orders and themed collections.
