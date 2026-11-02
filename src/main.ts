@@ -6,12 +6,15 @@ import {
   buyDecoration,
   buySpecimen,
   buyTerrarium,
+  decorationSellPrice,
   decorationUpgradePrice,
+  layingDue,
   hasRoom,
   moveSalamander,
   newGame,
   nextTerrariumPrice,
   occupied,
+  sellDecoration,
   sellSalamander,
   TOTAL_SPECIES,
   upgradeDecoration,
@@ -22,7 +25,9 @@ import { sellPrice } from "./game/rarity";
 import { type Salamander, speciesName } from "./game/salamander";
 import { load, reset, save } from "./game/save";
 import type { GameState } from "./game/state";
-import { capacity, happiness, type Terrarium } from "./game/terrarium";
+import { adultMales, capacity, happiness, type Terrarium } from "./game/terrarium";
+import { COLOR_IDS } from "./data/colors";
+import { discoveryMapSvg, recipesList, TOTAL_LINKS } from "./render/discovery";
 import { MARKET } from "./data/balance";
 import { salamanderSvg } from "./render/salamander";
 
@@ -80,8 +85,22 @@ function salamanderCard(s: Salamander, terrarium: Terrarium): string {
     ${salamanderSvg(s.genome, s.stage)}
     <div class="name">${name}</div>
     <div class="meta">${s.sex === "female" ? "♀" : "♂"} · ${STAGE_NAMES[s.stage]}${end ? ` · ${timer(end)}` : ""}</div>
+    ${femaleStatus(s, terrarium)}
     ${actions}
   </div>`;
+}
+
+function femaleStatus(s: Salamander, terrarium: Terrarium): string {
+  if (s.sex !== "female" || s.stage !== "adult") return "";
+  const due = layingDue(s);
+  if (due !== null) {
+    return due > Date.now()
+      ? `<div class="status pregnant">🥚 Pregnant · lays in ${timer(due)}</div>`
+      : `<div class="status pregnant">🥚 Ready to lay · needs room</div>`;
+  }
+  if (s.restUntil && s.restUntil > Date.now()) return `<div class="status">💤 Resting ${timer(s.restUntil)}</div>`;
+  if (!adultMales(terrarium).length) return `<div class="status">Needs a ♂ in the terrarium</div>`;
+  return `<div class="status">💞 Looking for a mate</div>`;
 }
 
 function decorationSlots(t: Terrarium): string {
@@ -93,6 +112,7 @@ function decorationSlots(t: Terrarium): string {
       <div>${DECORATION_THEME_NAMES[d.theme]} ${DECORATION_TYPE_NAMES[type].toLowerCase()}</div>
       <div class="stars">${"★".repeat(d.quality)}${"☆".repeat(3 - d.quality)}</div>
       ${price ? `<button data-action="upgrade-deco" data-id="${t.id}" data-type="${type}">↑ ${fmt(price)} 🪙</button>` : ""}
+      <button data-action="sell-deco" data-id="${t.id}" data-type="${type}">Sell ${fmt(decorationSellPrice(d.spent))} 🪙</button>
     </div>`;
   }).join("");
 }
@@ -113,7 +133,7 @@ function terrariumsView(): string {
         </header>
         <div class="stats">
           <span>Happiness <meter min="0" max="1" value="${happiness(t)}"></meter></span>
-          <span>${t.nextLayingAt ? `Next laying ${timer(t.nextLayingAt)}` : "No laying: needs a ♀ and a ♂ adult and room"}</span>
+          <span>${hasRoom(state, t) ? "" : "Full: pregnant females wait for a free slot to lay"}</span>
         </div>
         <div class="slots">${decorationSlots(t)}</div>
         <div class="grid">
@@ -176,7 +196,12 @@ function encyclopediaView(): string {
   const found = state.discovered.length;
   const seen = Object.keys(state.decorationsSeen).length;
   const total = DECORATION_THEMES.length * DECORATION_TYPES.length;
-  return `<h2>Species</h2>
+  return `<h2>Discovery map</h2>
+    <p>${state.discoveredColors.length} / ${COLOR_IDS.length} colors · ${state.discoveredLinks.length} / ${TOTAL_LINKS} mutations observed</p>
+    ${discoveryMapSvg(state)}
+    <h2>Pattern recipes</h2>
+    ${recipesList(state)}
+    <h2>Species</h2>
     <p>${found} / ${fmt(TOTAL_SPECIES)} discovered (${((100 * found) / TOTAL_SPECIES).toFixed(2)} %)</p>
     <ul class="species">${[...state.discovered].sort().map((n) => `<li>${n}</li>`).join("")}</ul>
     <h2>Decorations</h2>
@@ -244,6 +269,8 @@ app.addEventListener("click", (event) => {
       return commit(buySpecimen(state, id, ui.targets[id] ?? "", now));
     case "buy-deco":
       return commit(buyDecoration(state, id, ui.targets[id] ?? ""));
+    case "sell-deco":
+      return commit(sellDecoration(state, id, type as DecorationType));
     case "upgrade-deco":
       return commit(upgradeDecoration(state, id, type as DecorationType));
     case "reset":
@@ -260,7 +287,7 @@ function fingerprint(): string {
     state.coins,
     state.market.refreshedAt,
     state.deliveries.length,
-    state.terrariums.map((t) => [t.nextLayingAt, t.inhabitants.map((s) => s.stage)]),
+    state.terrariums.map((t) => t.inhabitants.map((s) => [s.stage, !!s.pregnancy, s.nextMatingAt == null, (s.restUntil ?? 0) > Date.now()])),
   ]);
 }
 

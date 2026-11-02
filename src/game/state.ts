@@ -35,10 +35,16 @@ export interface GameState {
   deliveries: Delivery[];
   /** Species names discovered (encyclopedia). */
   discovered: string[];
+  /** Colors seen on the player's salamanders (discovery map). */
+  discoveredColors: string[];
+  /** Color mutations observed, as "a|b" with the two colors sorted (links work both ways). */
+  discoveredLinks: string[];
+  /** Pattern fusions observed, as "a+b" with the two parents sorted. */
+  discoveredRecipes: string[];
   /** Highest quality reached for each decoration, keyed "theme:type". */
   decorationsSeen: Record<string, DecorationQuality>;
-  /** Whether the very first laying of the game has happened. */
-  hasLaid: boolean;
+  /** Whether the very first mating of the game has happened. */
+  hasMated: boolean;
   /** Counter for unique ids. */
   nextId: number;
   /** Timestamp (ms) of the last update, used to catch up on offline progress. */

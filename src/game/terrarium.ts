@@ -4,7 +4,7 @@ import {
   DETAIL_MAX_CHANCE,
   DETAIL_MIN_DECORATIONS,
   FEW_DECORATIONS_MAX,
-  LAYING_DELAY,
+  MATING_DELAY,
   MAX_DECORATIONS,
   MIXED_THEME_PENALTY,
   TERRARIUM_SIZES,
@@ -22,6 +22,8 @@ export interface Decoration {
   type: DecorationType;
   theme: DecorationTheme;
   quality: DecorationQuality;
+  /** Coins spent on it (purchase and upgrades), to compute its resale price. */
+  spent: number;
 }
 
 /** The terrarium is the breeding pen; eggs incubate inside and take up a slot. */
@@ -34,8 +36,6 @@ export interface Terrarium {
   /** At most one decoration per type. */
   decorations: Decoration[];
   inhabitants: Salamander[];
-  /** Timestamp (ms) of the next laying, or null when no pair can breed. */
-  nextLayingAt: number | null;
 }
 
 export function capacity(terrarium: Terrarium): number {
@@ -71,18 +71,14 @@ export function hasFewDecorations(terrarium: Terrarium): boolean {
   return terrarium.decorations.length <= FEW_DECORATIONS_MAX;
 }
 
-/** Random delay before the next laying; both bounds shrink linearly with happiness. */
-export function layingDelay(terrarium: Terrarium, random: Random): number {
+/** Random delay before a female gets pregnant; both bounds shrink linearly with happiness. */
+export function matingDelay(terrarium: Terrarium, random: Random): number {
   const h = happiness(terrarium);
-  const [slowMin, slowMax] = LAYING_DELAY.unhappy;
-  const [fastMin, fastMax] = LAYING_DELAY.happy;
+  const [slowMin, slowMax] = MATING_DELAY.unhappy;
+  const [fastMin, fastMax] = MATING_DELAY.happy;
   return between(slowMin + (fastMin - slowMin) * h, slowMax + (fastMax - slowMax) * h, random);
 }
 
-/** A male and a female adult, to breed. */
-export function breedingPair(terrarium: Terrarium): [Salamander, Salamander] | null {
-  const adults = terrarium.inhabitants.filter((s) => s.stage === "adult");
-  const mother = adults.find((s) => s.sex === "female");
-  const father = adults.find((s) => s.sex === "male");
-  return mother && father ? [mother, father] : null;
+export function adultMales(terrarium: Terrarium): Salamander[] {
+  return terrarium.inhabitants.filter((s) => s.stage === "adult" && s.sex === "male");
 }

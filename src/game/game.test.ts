@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { terrariumPrice } from "../data/balance";
-import { advance, buySpecimen, buyTerrarium, newGame, STARTING_COINS } from "./game";
+import { advance, buyDecoration, buySpecimen, buyTerrarium, moveSalamander, newGame, sellDecoration, STARTING_COINS, upgradeDecoration } from "./game";
 import { breed } from "./genetics";
 import type { Random } from "./random";
-import type { Genome } from "./salamander";
+import type { Genome, Salamander } from "./salamander";
 import type { Terrarium } from "./terrarium";
 
 /** Deterministic random numbers (mulberry32). */
@@ -23,7 +23,6 @@ const emptyTerrarium: Terrarium = {
   rank: 1,
   decorations: [],
   inhabitants: [],
-  nextLayingAt: null,
 };
 
 const SECOND = 1000;
@@ -32,7 +31,7 @@ describe("breed", () => {
   const random = seeded(1);
   const mother: Genome = { primary: "white", secondary: "yellow", pattern: "puncta", detail: "none" };
   const father: Genome = { primary: "yellow", secondary: "white", pattern: "annula", detail: "none" };
-  const children = Array.from({ length: 2000 }, () => breed(mother, father, emptyTerrarium, random));
+  const children = Array.from({ length: 2000 }, () => breed(mother, father, emptyTerrarium, random).genome);
 
   it("never gives the same primary and secondary color, except chameleon", () => {
     for (const child of children) {
@@ -68,10 +67,11 @@ describe("game", () => {
     advance(state, 30 * SECOND, random);
     expect(terrarium.inhabitants).toHaveLength(2);
 
-    advance(state, 40 * SECOND, random);
+    // Delivery at 30 s, first mating 10 s later, then 30 s of gestation.
+    advance(state, 75 * SECOND, random);
     expect(terrarium.inhabitants.map((s) => s.stage)).toContain("egg");
 
-    advance(state, (40 + 30 + 120) * SECOND, random);
+    advance(state, (70 + 30 + 120) * SECOND, random);
     expect(terrarium.inhabitants.filter((s) => s.stage === "adult")).toHaveLength(3);
     expect(state.discovered.length).toBeGreaterThanOrEqual(2);
   });
@@ -85,7 +85,73 @@ describe("game", () => {
     buySpecimen(state, female!.id, terrarium.id, 0);
     buySpecimen(state, male!.id, terrarium.id, 0);
     advance(state, 24 * 3600 * SECOND, random);
-    expect(terrarium.inhabitants).toHaveLength(4);
-    expect(terrarium.nextLayingAt).toBeNull();
+    expect(terrarium.inhabitants).toHaveLength(6);
+  });
+
+  it("lets one male fertilize several females", () => {
+    const random = seeded(5);
+    const state = newGame(0, random);
+    buyTerrarium(state);
+    const terrarium = state.terrariums[0]!;
+    const adult = (sex: "female" | "male"): Salamander => ({
+      id: sex + Math.random(),
+      genome: { primary: "white", secondary: "yellow", pattern: "recta", detail: "none" },
+      sex,
+      stage: "adult",
+      stageSince: 0,
+    });
+    terrarium.inhabitants.push(adult("female"), adult("female"), adult("male"));
+    advance(state, 6 * 60 * SECOND, random);
+    const females = terrarium.inhabitants.filter((s) => s.sex === "female" && s.stage === "adult");
+    expect(females.every((f) => f.restUntil !== undefined || f.pregnancy)).toBe(true);
+    expect(terrarium.inhabitants.some((s) => s.stage !== "adult")).toBe(true);
+  });
+
+  it("keeps a pregnancy when the female moves, and waits for room to lay", () => {
+    const random = seeded(6);
+    const state = newGame(0, random);
+    state.coins = 10_000;
+    buyTerrarium(state);
+    buyTerrarium(state);
+    const [first, second] = state.terrariums as [Terrarium, Terrarium];
+    const filler = (i: number): Salamander => ({
+      id: "f" + i,
+      genome: { primary: "black", secondary: "white", pattern: "riga", detail: "none" },
+      sex: "male",
+      stage: "adult",
+      stageSince: 0,
+    });
+    second.inhabitants.push(...[0, 1, 2, 3, 4].map(filler));
+    const mother: Salamander = {
+      id: "m",
+      genome: { primary: "white", secondary: "yellow", pattern: "recta", detail: "none" },
+      sex: "female",
+      stage: "adult",
+      stageSince: 0,
+      pregnancy: { father: filler(9).genome, since: 0 },
+    };
+    first.inhabitants.push(mother);
+    expect(moveSalamander(state, "m", second.id, 0, random)).toBeNull();
+    expect(second.inhabitants).toHaveLength(6);
+    advance(state, 60 * SECOND, random);
+    expect(mother.pregnancy).not.toBeNull();
+    second.inhabitants.splice(0, 1);
+    advance(state, 61 * SECOND, random);
+    expect(mother.pregnancy).toBeNull();
+    expect(second.inhabitants.some((s) => s.stage === "egg")).toBe(true);
+  });
+
+  it("sells a decoration for half of everything spent on it", () => {
+    const state = newGame(0, seeded(7));
+    state.coins = 1_000;
+    buyTerrarium(state);
+    const terrarium = state.terrariums[0]!;
+    const offer = state.market.decorations[0]!;
+    buyDecoration(state, offer.id, terrarium.id);
+    upgradeDecoration(state, terrarium.id, offer.type);
+    const before = state.coins;
+    expect(sellDecoration(state, terrarium.id, offer.type)).toBeNull();
+    expect(state.coins - before).toBe(100);
+    expect(terrarium.decorations).toHaveLength(0);
   });
 });

@@ -1,6 +1,7 @@
 import type { GameState } from "./state";
 
-const KEY = "salamander-save-v1";
+/** Bumped when the save format changes: older saves start a new game. */
+const KEY = "salamander-save-v2";
 
 export function load(): GameState | null {
   try {

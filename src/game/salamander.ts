@@ -17,6 +17,13 @@ export type Sex = "male" | "female";
 /** Egg → pupa → adult; adults live forever. */
 export type Stage = "egg" | "pupa" | "adult";
 
+export interface Pregnancy {
+  /** Genome of the male that fertilized the female. */
+  father: Genome;
+  /** Timestamp (ms) of the mating; the egg is laid after the gestation, as soon as there is room. */
+  since: number;
+}
+
 export interface Salamander {
   id: string;
   genome: Genome;
@@ -24,6 +31,14 @@ export interface Salamander {
   stage: Stage;
   /** Timestamp (ms) when the current stage started. */
   stageSince: number;
+  /** Females only: current pregnancy. */
+  pregnancy?: Pregnancy | null;
+  /** Females only: timestamp (ms) of the next mating, or null when no male is around. */
+  nextMatingAt?: number | null;
+  /** Females only: no mating before this timestamp (ms), after laying. */
+  restUntil?: number;
+  /** Mutations and fusion that produced this egg, revealed on the discovery map at adulthood. */
+  birth?: { mutations: [string, string][]; fusion: [string, string, string] | null };
 }
 
 /**

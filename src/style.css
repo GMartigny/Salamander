@@ -265,3 +265,27 @@ meter {
   border-radius: 8px;
   font-size: 13px;
 }
+
+.status {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.status.pregnant {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.discovery-map {
+  width: 100%;
+  height: auto;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.recipes {
+  padding-left: 18px;
+  font-size: 13px;
+}

@@ -1,10 +1,13 @@
 import {
   DECORATION_PRICES,
-  FIRST_LAYING_DELAY,
+  DECORATION_SELL_RATIO,
+  FIRST_MATING_DELAY,
+  GESTATION_DURATION,
   INCUBATION_DURATION,
   MARKET,
   MAX_TERRARIUMS,
   PUPA_DURATION,
+  REST_DURATION,
   TERRARIUM_UPGRADES,
   terrariumPrice,
 } from "../data/balance";
@@ -16,9 +19,9 @@ import { breed } from "./genetics";
 import { refreshMarket } from "./market";
 import { pick, type Random } from "./random";
 import { sellPrice } from "./rarity";
-import { type Genome, type Salamander, speciesName } from "./salamander";
+import { type Salamander, speciesName } from "./salamander";
 import { type GameState, newId } from "./state";
-import { breedingPair, capacity, layingDelay, type Terrarium } from "./terrarium";
+import { adultMales, capacity, matingDelay, type Terrarium } from "./terrarium";
 
 /** Enough for a small terrarium and a pair of common salamanders. */
 export const STARTING_COINS = 220;
@@ -30,8 +33,11 @@ export function newGame(now: number, random: Random = Math.random): GameState {
     market: { specimens: [], decorations: [], refreshedAt: now },
     deliveries: [],
     discovered: [],
+    discoveredColors: [],
+    discoveredLinks: [],
+    discoveredRecipes: [],
     decorationsSeen: {},
-    hasLaid: false,
+    hasMated: false,
     nextId: 0,
     lastTick: now,
   };
@@ -47,9 +53,26 @@ export const TOTAL_SPECIES = (() => {
   return (colorPairs * patterns + colors) * DETAIL_IDS.length;
 })();
 
-export function discover(state: GameState, genome: Genome): void {
-  const name = speciesName(genome);
-  if (!state.discovered.includes(name)) state.discovered.push(name);
+function addOnce(list: string[], item: string): void {
+  if (!list.includes(item)) list.push(item);
+}
+
+export function linkKey(a: string, b: string): string {
+  return [a, b].sort().join("|");
+}
+
+export function recipeKey(a: string, b: string): string {
+  return [a, b].sort().join("+");
+}
+
+/** Records a salamander the player now owns as an adult: species, colors and how it was born. */
+export function discover(state: GameState, salamander: Pick<Salamander, "genome" | "birth">): void {
+  const { genome, birth } = salamander;
+  addOnce(state.discovered, speciesName(genome));
+  addOnce(state.discoveredColors, genome.primary);
+  if (genome.pattern !== "iustus") addOnce(state.discoveredColors, genome.secondary);
+  for (const [from, to] of birth?.mutations ?? []) addOnce(state.discoveredLinks, linkKey(from, to));
+  if (birth?.fusion) addOnce(state.discoveredRecipes, recipeKey(birth.fusion[0], birth.fusion[1]));
 }
 
 export function occupied(state: GameState, terrarium: Terrarium): number {
@@ -60,12 +83,17 @@ export function hasRoom(state: GameState, terrarium: Terrarium): boolean {
   return occupied(state, terrarium) < capacity(terrarium);
 }
 
-/** Schedules the next laying when a pair can breed, or cancels it when not. */
+/** Schedules the next mating of each available female when a male is around, or cancels it when not. */
 function schedule(state: GameState, terrarium: Terrarium, from: number, random: Random): void {
-  if (!breedingPair(terrarium) || !hasRoom(state, terrarium)) {
-    terrarium.nextLayingAt = null;
-  } else if (terrarium.nextLayingAt === null) {
-    terrarium.nextLayingAt = from + (state.hasLaid ? layingDelay(terrarium, random) : FIRST_LAYING_DELAY);
+  const hasMale = adultMales(terrarium).length > 0;
+  for (const female of terrarium.inhabitants) {
+    if (female.sex !== "female" || female.stage !== "adult") continue;
+    if (female.pregnancy || !hasMale) {
+      female.nextMatingAt = null;
+    } else if (female.nextMatingAt == null) {
+      const start = Math.max(from, female.restUntil ?? 0);
+      female.nextMatingAt = start + (state.hasMated ? matingDelay(terrarium, random) : FIRST_MATING_DELAY);
+    }
   }
 }
 
@@ -75,45 +103,60 @@ function stageEnd(salamander: Salamander): number {
   return Infinity;
 }
 
-function lay(state: GameState, terrarium: Terrarium, at: number, random: Random): void {
-  const adults = terrarium.inhabitants.filter((s) => s.stage === "adult");
-  const mother = pick(adults.filter((s) => s.sex === "female"), random);
-  const father = pick(adults.filter((s) => s.sex === "male"), random);
-  terrarium.inhabitants.push({
-    id: newId(state, "s"),
-    genome: breed(mother.genome, father.genome, terrarium, random),
-    sex: pick(["female", "male"] as const, random),
-    stage: "egg",
-    stageSince: at,
-  });
-  state.hasLaid = true;
-  terrarium.nextLayingAt = null;
+export function layingDue(female: Salamander): number | null {
+  return female.pregnancy ? female.pregnancy.since + GESTATION_DURATION : null;
+}
+
+type TerrariumEvent = { at: number; salamander: Salamander; kind: "grow" | "mate" | "lay" };
+
+/** The earliest thing that will happen in a terrarium. Laying waits for a free slot. */
+function nextEvent(state: GameState, terrarium: Terrarium, floor: number): TerrariumEvent | null {
+  let next: TerrariumEvent | null = null;
+  const consider = (at: number, salamander: Salamander, kind: TerrariumEvent["kind"]) => {
+    if (!next || at < next.at) next = { at, salamander, kind };
+  };
+  const room = hasRoom(state, terrarium);
+  for (const s of terrarium.inhabitants) {
+    if (s.stage !== "adult") consider(stageEnd(s), s, "grow");
+    if (s.nextMatingAt != null) consider(s.nextMatingAt, s, "mate");
+    const due = layingDue(s);
+    if (due !== null && room) consider(Math.max(due, floor), s, "lay");
+  }
+  return next;
 }
 
 /** Plays every event of a terrarium up to `now`, in order, so offline time is caught up exactly. */
 function advanceTerrarium(state: GameState, terrarium: Terrarium, now: number, random: Random): void {
-  schedule(state, terrarium, state.lastTick, random);
-  for (;;) {
-    const growing = terrarium.inhabitants.reduce<Salamander | null>(
-      (next, s) => (next === null || stageEnd(s) < stageEnd(next) ? s : next),
-      null,
-    );
-    const growAt = growing ? stageEnd(growing) : Infinity;
-    const layAt = terrarium.nextLayingAt ?? Infinity;
-    const at = Math.min(growAt, layAt);
-    if (at > now) break;
-    if (growing && growAt <= layAt) {
-      growing.stage = growing.stage === "egg" ? "pupa" : "adult";
-      growing.stageSince = growAt;
-      if (growing.stage === "adult") discover(state, growing.genome);
-    } else {
-      lay(state, terrarium, layAt, random);
+  const floor = state.lastTick;
+  schedule(state, terrarium, floor, random);
+  for (let event = nextEvent(state, terrarium, floor); event && event.at <= now; event = nextEvent(state, terrarium, floor)) {
+    const { at, salamander, kind } = event;
+    if (kind === "grow") {
+      salamander.stage = salamander.stage === "egg" ? "pupa" : "adult";
+      salamander.stageSince = at;
+      if (salamander.stage === "adult") discover(state, salamander);
+    } else if (kind === "mate") {
+      salamander.pregnancy = { father: pick(adultMales(terrarium), random).genome, since: at };
+      salamander.nextMatingAt = null;
+      state.hasMated = true;
+    } else if (salamander.pregnancy) {
+      const birth = breed(salamander.genome, salamander.pregnancy.father, terrarium, random);
+      terrarium.inhabitants.push({
+        id: newId(state, "s"),
+        genome: birth.genome,
+        sex: pick(["female", "male"] as const, random),
+        stage: "egg",
+        stageSince: at,
+        birth: { mutations: birth.mutations, fusion: birth.fusion },
+      });
+      salamander.pregnancy = null;
+      salamander.restUntil = at + REST_DURATION;
     }
     schedule(state, terrarium, at, random);
   }
 }
 
-/** Advances the whole game to `now`: market rotation, deliveries, growth and laying. */
+/** Advances the whole game to `now`: market rotation, deliveries, growth, mating and laying. */
 export function advance(state: GameState, now: number, random: Random = Math.random): void {
   if (now - state.market.refreshedAt >= MARKET.rotation) {
     const rotations = Math.floor((now - state.market.refreshedAt) / MARKET.rotation);
@@ -125,7 +168,7 @@ export function advance(state: GameState, now: number, random: Random = Math.ran
     state.deliveries.splice(state.deliveries.indexOf(delivery), 1);
     if (!terrarium) continue;
     terrarium.inhabitants.push({ ...delivery.salamander, stageSince: delivery.arrivesAt });
-    discover(state, delivery.salamander.genome);
+    discover(state, delivery.salamander);
     schedule(state, terrarium, Math.max(delivery.arrivesAt, state.lastTick), random);
   }
 
@@ -205,7 +248,6 @@ export function buyTerrarium(state: GameState): string | null {
     rank: state.terrariums.length + 1,
     decorations: [],
     inhabitants: [],
-    nextLayingAt: null,
   });
   return null;
 }
@@ -243,7 +285,7 @@ export function buyDecoration(state: GameState, offerId: string, terrariumId: st
   if (error) return error;
   state.market.decorations.splice(state.market.decorations.indexOf(offer), 1);
   terrarium.decorations = terrarium.decorations.filter((d) => d.type !== offer.type);
-  terrarium.decorations.push({ type: offer.type, theme: offer.theme, quality: 1 });
+  terrarium.decorations.push({ type: offer.type, theme: offer.theme, quality: 1, spent: DECORATION_PRICES.purchase });
   seeDecoration(state, terrarium, offer.type);
   return null;
 }
@@ -262,6 +304,20 @@ export function upgradeDecoration(state: GameState, terrariumId: string, type: D
   const error = spend(state, price);
   if (error) return error;
   decoration.quality = (decoration.quality + 1) as 2 | 3;
+  decoration.spent += price;
   seeDecoration(state, terrarium, type);
+  return null;
+}
+
+export function decorationSellPrice(spent: number): number {
+  return Math.round(spent * DECORATION_SELL_RATIO);
+}
+
+export function sellDecoration(state: GameState, terrariumId: string, type: DecorationType): string | null {
+  const terrarium = findTerrarium(state, terrariumId);
+  const decoration = terrarium?.decorations.find((d) => d.type === type);
+  if (!terrarium || !decoration) return "Unavailable";
+  terrarium.decorations.splice(terrarium.decorations.indexOf(decoration), 1);
+  state.coins += decorationSellPrice(decoration.spent);
   return null;
 }

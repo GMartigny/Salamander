@@ -177,13 +177,14 @@ The theme of a terrarium's decorations increases the chance of one detail appear
 
 The terrarium is the breeding pen: the player chooses crosses by distributing males and females across terrariums.
 
-1. **Laying**: adults in the same terrarium breed as long as there is room. The delay between two layings is random within a range set by happiness (see below).
-2. **Egg**: it incubates directly in the terrarium and takes up a slot. Incubation lasts 30 seconds.
-3. **Pupa**: intermediate stage before adulthood. It lasts 2 minutes.
-4. **Adult**: final stage; the salamander never dies.
+1. **Mating**: an adult female sharing a terrarium with an adult male gets pregnant after a random delay set by happiness (see below). One male can fertilize several females.
+2. **Pregnancy**: the female carries the father's genes for 30 seconds of gestation, then lays the egg as soon as the terrarium has a free slot. A pregnant female keeps her pregnancy when moved: the terrarium where she lays decides the detail. After laying, she rests 1 minute before she can mate again.
+3. **Egg**: it incubates directly in the terrarium and takes up a slot. Incubation lasts 30 seconds.
+4. **Pupa**: intermediate stage before adulthood. It lasts 2 minutes.
+5. **Adult**: final stage; the salamander never dies.
 
 - Salamanders have a sex. If several pairs are possible in a terrarium, the male/female pair is drawn at random. Isolating a single pair forces a specific cross.
-- A full terrarium produces no more eggs. To continue, the player sells salamanders or buys a terrarium.
+- A full terrarium produces no more eggs: pregnant females wait for a free slot. To continue, the player sells or moves salamanders, or buys a terrarium.
 - While offline, laying continues until the terrariums are full: a natural limit, with no artificial friction.
 
 ### Happiness
@@ -199,14 +200,14 @@ The terrarium is the breeding pen: the player chooses crosses by distributing ma
 | 2 | 0.15 |
 | 3 | 0.20 |
 
-| Happiness | Delay between two layings |
+| Happiness | Delay before a female gets pregnant |
 | --- | --- |
 | 0 (base) | 3 to 5 minutes |
 | 1 (maximum) | 1 to 2 minutes |
 
 In between, both bounds of the range move linearly with happiness.
 
-The very first laying of a new game is forced to happen after 10 seconds, so a new player sees a hatching within a minute.
+The very first mating of a new game is forced to happen after 10 seconds, so a new player sees an egg after 40 seconds.
 
 ## Economy
 
@@ -218,9 +219,9 @@ A single currency, **coins** (working name), is used for all purchases and sales
 
 | Size | Capacity | Price (purchase or upgrade) for the 1st | 2nd | 3rd | … | 10th |
 | --- | --- | --- | --- | --- | --- | --- |
-| Small | 4 | 100 | 150 | 225 | … | 3,844 |
-| Medium | 7 | 1,000 | 1,500 | 2,250 | … | 38,443 |
-| Large | 10 | 10,000 | 15,000 | 22,500 | … | 384,434 |
+| Small | 6 | 100 | 150 | 225 | … | 3,844 |
+| Medium | 10 | 1,000 | 1,500 | 2,250 | … | 38,443 |
+| Large | 16 | 10,000 | 15,000 | 22,500 | … | 384,434 |
 
 - **Decorations**: each has a type, a theme and a quality. The theme influences details and personalizes the terrarium.
     - Types: plant, rock, light, toy, shelter.
@@ -233,6 +234,8 @@ A single currency, **coins** (working name), is used for all purchases and sales
 | Purchase (quality 1) | 50 |
 | Upgrade to quality 2 | 150 |
 | Upgrade to quality 3 | 450 |
+
+A decoration can be sold back for 50% of everything spent on it (purchase and upgrades).
 - **Special orders**: one or more salamanders with specific traits to deliver within a time limit, for an attractive coin reward.
 
 ### Market
@@ -262,6 +265,7 @@ The player always has a goal at each of three horizons, and the encyclopedia car
 - Every discovered combination is recorded.
 - Pages by color, by pattern and by detail make progress readable despite the ~26,900 combinations.
 - A decorations page lists the 30 decorations, with the highest quality reached for each.
+- A discovery map shows the color graph, with only the colors the player has owned and the mutations observed between them, and the list of pattern recipes seen happen.
 
 ### Themed collections
 

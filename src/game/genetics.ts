@@ -7,24 +7,39 @@ import { chance, pick, type Random, weightedPick } from "./random";
 import type { Genome } from "./salamander";
 import { hasFewDecorations, mainTheme, type Terrarium, themeDetailChance } from "./terrarium";
 
+/** What happened during a birth, to fill the discovery map. */
+export interface BirthReport {
+  genome: Genome;
+  /** Color mutations observed, as [from, to]. */
+  mutations: [ColorId, ColorId][];
+  /** Pattern fusion that happened, as [parent, parent, result]. */
+  fusion: [PatternId, PatternId, PatternId] | null;
+}
+
 /** Mutates to a neighbor in the color graph, picked by rarity weight. */
 function mutate(color: ColorId, random: Random, exclude?: ColorId): ColorId {
   const options = neighbors(color).filter((c) => c !== exclude || c === WILDCARD_COLOR);
   return weightedPick(options, (c) => COLORS[c].weight, random);
 }
 
-function inheritColor(color: ColorId, random: Random): ColorId {
-  return chance(MUTATION_CHANCE, random) ? mutate(color, random) : color;
+function inheritColor(color: ColorId, random: Random, mutations: [ColorId, ColorId][]): ColorId {
+  if (!chance(MUTATION_CHANCE, random)) return color;
+  const mutated = mutate(color, random);
+  mutations.push([color, mutated]);
+  return mutated;
 }
 
 function samePair(a: ColorId, b: ColorId): boolean {
   return a === b && a !== WILDCARD_COLOR;
 }
 
-function inheritPattern(mother: Genome, father: Genome, terrarium: Terrarium, random: Random): PatternId {
+function inheritPattern(mother: Genome, father: Genome, terrarium: Terrarium, random: Random, report: BirthReport): PatternId {
   if (hasFewDecorations(terrarium) && chance(FEW_DECORATIONS_IUSTUS_CHANCE, random)) return "iustus";
   const fused = fusionResult(mother.pattern, father.pattern);
-  if (fused && chance(FUSION_CHANCE, random)) return fused;
+  if (fused && chance(FUSION_CHANCE, random)) {
+    report.fusion = [mother.pattern, father.pattern, fused];
+    return fused;
+  }
   return pick([mother.pattern, father.pattern], random);
 }
 
@@ -43,17 +58,29 @@ function inheritDetail(mother: Genome, father: Genome, terrarium: Terrarium, ran
  * 3. empty pool → forced mutation to a neighbor.
  * Pattern by fusion, detail influenced by the terrarium's decorations.
  */
-export function breed(mother: Genome, father: Genome, terrarium: Terrarium, random: Random = Math.random): Genome {
-  const primary = inheritColor(pick([mother.primary, father.primary], random), random);
+export function breed(mother: Genome, father: Genome, terrarium: Terrarium, random: Random = Math.random): BirthReport {
+  const report: BirthReport = { genome: mother, mutations: [], fusion: null };
+  const primary = inheritColor(pick([mother.primary, father.primary], random), random, report.mutations);
 
   const pool = [mother.secondary, father.secondary].filter((c) => !samePair(c, primary));
-  let secondary = pool.length ? inheritColor(pick(pool, random), random) : mutate(mother.secondary, random, primary);
-  if (samePair(secondary, primary)) secondary = mutate(secondary, random, primary);
+  let secondary: ColorId;
+  if (pool.length) {
+    secondary = inheritColor(pick(pool, random), random, report.mutations);
+  } else {
+    secondary = mutate(mother.secondary, random, primary);
+    report.mutations.push([mother.secondary, secondary]);
+  }
+  if (samePair(secondary, primary)) {
+    const forced = mutate(secondary, random, primary);
+    report.mutations.push([secondary, forced]);
+    secondary = forced;
+  }
 
-  return {
+  report.genome = {
     primary,
     secondary,
-    pattern: inheritPattern(mother, father, terrarium, random),
+    pattern: inheritPattern(mother, father, terrarium, random, report),
     detail: inheritDetail(mother, father, terrarium, random),
   };
+  return report;
 }

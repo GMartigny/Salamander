@@ -5,16 +5,22 @@
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
-/** Delay between two layings, as a [min, max] range in ms. */
-export const LAYING_DELAY = {
+/** Delay before a female with a male nearby gets pregnant, as a [min, max] range in ms. */
+export const MATING_DELAY = {
   /** With base happiness (0). */
   unhappy: [3 * MINUTE, 5 * MINUTE],
   /** With maximum happiness (1): 5 decorations of the same theme. */
   happy: [1 * MINUTE, 2 * MINUTE],
 } as const;
 
-/** The very first laying of a new game is forced to happen quickly. */
-export const FIRST_LAYING_DELAY = 10 * SECOND;
+/** The very first mating of a new game is forced to happen quickly. */
+export const FIRST_MATING_DELAY = 10 * SECOND;
+
+/** Time between mating and laying the egg. */
+export const GESTATION_DURATION = 30 * SECOND;
+
+/** Rest after laying, before the female can mate again. */
+export const REST_DURATION = 1 * MINUTE;
 
 export const INCUBATION_DURATION = 30 * SECOND;
 export const PUPA_DURATION = 2 * MINUTE;
@@ -30,6 +36,9 @@ export const DECORATION_HAPPINESS: Record<DecorationQuality, number> = { 1: 0.1,
 /** Purchase price at quality 1, then the price of each upgrade. */
 export const DECORATION_PRICES = { purchase: 50, upgradeTo2: 150, upgradeTo3: 450 } as const;
 
+/** Share of everything spent on a decoration (purchase and upgrades) received when selling it. */
+export const DECORATION_SELL_RATIO = 0.5;
+
 /** A terrarium with at most this many decorations favors no pattern (iustus). */
 export const FEW_DECORATIONS_MAX = 1;
 
@@ -43,9 +52,9 @@ export const DETAIL_MIN_DECORATIONS = 2;
 export const DETAIL_MAX_CHANCE = 0.1;
 
 export const TERRARIUM_SIZES = {
-  small: { capacity: 4, basePrice: 100 },
-  medium: { capacity: 7, basePrice: 1_000 },
-  large: { capacity: 10, basePrice: 10_000 },
+  small: { capacity: 6, basePrice: 100 },
+  medium: { capacity: 10, basePrice: 1_000 },
+  large: { capacity: 16, basePrice: 10_000 },
 } as const;
 
 export type TerrariumSize = keyof typeof TERRARIUM_SIZES;
