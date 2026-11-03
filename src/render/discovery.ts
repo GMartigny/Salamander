@@ -1,5 +1,5 @@
 import { COLOR_IDS, COLORS, type ColorId, MUTATION_LINKS, WILDCARD_COLOR } from "../data/colors";
-import { FUSION_RECIPES, PATTERNS } from "../data/patterns";
+import { FUSION_RECIPES, type PatternId, PATTERNS } from "../data/patterns";
 import { linkKey, recipeKey } from "../game/game";
 import type { GameState } from "../game/state";
 import { COLOR_HEX } from "./salamander";
@@ -61,5 +61,10 @@ export function recipesList(state: GameState): string {
   const items = FUSION_RECIPES.filter(({ parents: [a, b] }) => found.has(recipeKey(a, b))).map(
     ({ parents: [a, b], result }) => `<li>${PATTERNS[a].name} + ${PATTERNS[b].name} → <strong>${PATTERNS[result].name}</strong></li>`,
   );
-  return `<p>${items.length} / ${FUSION_RECIPES.length} recipes found</p><ul class="recipes">${items.join("")}</ul>`;
+  const tried = (state.triedWithoutResult ?? []).map((key) => {
+    const [a, b] = key.split("+") as [PatternId, PatternId];
+    return `<li>${PATTERNS[a].name} + ${PATTERNS[b].name} → ✗</li>`;
+  });
+  return `<p>${items.length} / ${FUSION_RECIPES.length} recipes found</p><ul class="recipes">${items.join("")}</ul>
+    ${tried.length ? `<p class="meta">Tried without result</p><ul class="recipes tried">${tried.join("")}</ul>` : ""}`;
 }

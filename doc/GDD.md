@@ -133,7 +133,7 @@ To avoid repeating the color mechanism, patterns and details each evolve in a di
 - Patterns: vertical lines (*recta*), zebra (*riga*), leaf (*folia*), clouds (*nuba*), splash (*macula*), dots (*puncta*), rings (*annula*), gradient (*progressa*), legs only (*gamba*), head only (*capita*), swirls (*voluta*), arrows (*sagitta*), star (*stella*), skull (*crania*).
 - No pattern (*iustus*): only the primary color is visible.
 
-Recipes (source: "Mélange des pattern" tab of the "Espèces" spreadsheet). Parent order does not matter. Most recipes mix two different patterns; a pair of the same pattern can also produce a different one (mutation), but that stays rare. A result never appears twice among the recipes that share a parent. Every pattern leads to another one, except the skull, the end of the chain. Dots and clouds are the bridges to the rarer patterns. Any pattern can also be bought at the market, so the chain does not need a single starting point.
+Recipes (source: "Mélange des pattern" tab of the "Espèces" spreadsheet). A recipe always works: one cross is enough to know whether two patterns fuse. Parent order does not matter. Most recipes mix two different patterns; a pair of the same pattern can also produce a different one (mutation), but that stays rare. A result never appears twice among the recipes that share a parent. Every pattern leads to another one, except the skull, the end of the chain. Dots and clouds are the bridges to the rarer patterns. Any pattern can also be bought at the market, so the chain does not need a single starting point.
 
 | Parents | Result |
 | --- | --- |
@@ -265,7 +265,7 @@ The player always has a goal at each of three horizons, and the encyclopedia car
 - Every discovered combination is recorded.
 - Pages by color, by pattern and by detail make progress readable despite the ~26,900 combinations.
 - A decorations page lists the 30 decorations, with the highest quality reached for each.
-- A discovery map shows the color graph, with only the colors the player has owned and the mutations observed between them, and the list of pattern recipes seen happen.
+- A discovery map shows the color graph, with only the colors the player has owned and the mutations observed between them, the list of pattern recipes seen happen, and the pattern pairs tried without result.
 
 ### Themed collections
 
@@ -282,7 +282,6 @@ Temporary values used by the first playable version, to tune by playing.
 | Rule | Value |
 | --- | --- |
 | Chance for each inherited color to mutate | 10% |
-| Chance of fusion when the parents' patterns have a recipe | 70% |
 | Chance to inherit a parent's detail (when the theme gives none) | 20% |
 | Chance of no pattern in a terrarium with at most 1 decoration | 10% |
 | Price of the most common salamander | 20 coins, multiplied by the rarity of each trait |

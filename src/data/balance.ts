@@ -82,9 +82,6 @@ export function terrariumPrice(size: TerrariumSize, n: number): number {
 /** Chance for each inherited color to mutate to a neighbor in the graph. */
 export const MUTATION_CHANCE = 0.1;
 
-/** Chance that two parent patterns with a recipe produce the recipe's result. */
-export const FUSION_CHANCE = 0.7;
-
 /** Chance to inherit a parent's detail when the terrarium's theme gives none. */
 export const DETAIL_INHERIT_CHANCE = 0.2;
 

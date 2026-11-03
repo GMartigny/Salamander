@@ -36,6 +36,7 @@ export function newGame(now: number, random: Random = Math.random): GameState {
     discoveredColors: [],
     discoveredLinks: [],
     discoveredRecipes: [],
+    triedWithoutResult: [],
     decorationsSeen: {},
     hasMated: false,
     nextId: 0,
@@ -73,6 +74,7 @@ export function discover(state: GameState, salamander: Pick<Salamander, "genome"
   if (genome.pattern !== "iustus") addOnce(state.discoveredColors, genome.secondary);
   for (const [from, to] of birth?.mutations ?? []) addOnce(state.discoveredLinks, linkKey(from, to));
   if (birth?.fusion) addOnce(state.discoveredRecipes, recipeKey(birth.fusion[0], birth.fusion[1]));
+  if (birth?.noFusion) addOnce((state.triedWithoutResult ??= []), recipeKey(birth.noFusion[0], birth.noFusion[1]));
 }
 
 export function occupied(state: GameState, terrarium: Terrarium): number {
@@ -147,7 +149,7 @@ function advanceTerrarium(state: GameState, terrarium: Terrarium, now: number, r
         sex: pick(["female", "male"] as const, random),
         stage: "egg",
         stageSince: at,
-        birth: { mutations: birth.mutations, fusion: birth.fusion },
+        birth: { mutations: birth.mutations, fusion: birth.fusion, noFusion: birth.noFusion },
       });
       salamander.pregnancy = null;
       salamander.restUntil = at + REST_DURATION;

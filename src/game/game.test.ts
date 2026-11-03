@@ -39,10 +39,15 @@ describe("breed", () => {
     }
   });
 
-  it("fuses patterns with a recipe most of the time", () => {
-    const stars = children.filter((c) => c.pattern === "stella").length / children.length;
-    expect(stars).toBeGreaterThan(0.55);
-    expect(stars).toBeLessThan(0.75);
+  it("always fuses patterns with a recipe", () => {
+    expect(children.every((c) => c.pattern === "stella")).toBe(true);
+  });
+
+  it("reports parent patterns that have no recipe", () => {
+    const plain: Genome = { primary: "white", secondary: "yellow", pattern: "folia", detail: "none" };
+    const report = breed(plain, { ...plain, pattern: "crania" }, emptyTerrarium, seeded(9));
+    expect(report.fusion).toBeNull();
+    expect(report.noFusion).toEqual(["folia", "crania"]);
   });
 });
 

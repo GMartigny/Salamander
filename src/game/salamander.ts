@@ -38,7 +38,11 @@ export interface Salamander {
   /** Females only: no mating before this timestamp (ms), after laying. */
   restUntil?: number;
   /** Mutations and fusion that produced this egg, revealed on the discovery map at adulthood. */
-  birth?: { mutations: [string, string][]; fusion: [string, string, string] | null };
+  birth?: {
+    mutations: [string, string][];
+    fusion: [string, string, string] | null;
+    noFusion?: [string, string] | null;
+  };
 }
 
 /**

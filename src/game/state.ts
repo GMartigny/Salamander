@@ -41,6 +41,8 @@ export interface GameState {
   discoveredLinks: string[];
   /** Pattern fusions observed, as "a+b" with the two parents sorted. */
   discoveredRecipes: string[];
+  /** Pattern pairs tried that have no recipe, as "a+b" with the two parents sorted. */
+  triedWithoutResult: string[];
   /** Highest quality reached for each decoration, keyed "theme:type". */
   decorationsSeen: Record<string, DecorationQuality>;
   /** Whether the very first mating of the game has happened. */

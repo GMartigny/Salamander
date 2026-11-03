@@ -1,4 +1,4 @@
-import { DETAIL_INHERIT_CHANCE, FEW_DECORATIONS_IUSTUS_CHANCE, FUSION_CHANCE, MUTATION_CHANCE } from "../data/balance";
+import { DETAIL_INHERIT_CHANCE, FEW_DECORATIONS_IUSTUS_CHANCE, MUTATION_CHANCE } from "../data/balance";
 import { type ColorId, COLORS, neighbors, WILDCARD_COLOR } from "../data/colors";
 import type { DetailId } from "../data/details";
 import { THEME_DETAILS } from "../data/decorations";
@@ -14,6 +14,8 @@ export interface BirthReport {
   mutations: [ColorId, ColorId][];
   /** Pattern fusion that happened, as [parent, parent, result]. */
   fusion: [PatternId, PatternId, PatternId] | null;
+  /** Parent patterns that have no recipe, as [parent, parent]. */
+  noFusion: [PatternId, PatternId] | null;
 }
 
 /** Mutates to a neighbor in the color graph, picked by rarity weight. */
@@ -34,12 +36,14 @@ function samePair(a: ColorId, b: ColorId): boolean {
 }
 
 function inheritPattern(mother: Genome, father: Genome, terrarium: Terrarium, random: Random, report: BirthReport): PatternId {
-  if (hasFewDecorations(terrarium) && chance(FEW_DECORATIONS_IUSTUS_CHANCE, random)) return "iustus";
+  // A recipe always works, so one try is enough to know whether two patterns fuse.
   const fused = fusionResult(mother.pattern, father.pattern);
-  if (fused && chance(FUSION_CHANCE, random)) {
+  if (fused) {
     report.fusion = [mother.pattern, father.pattern, fused];
     return fused;
   }
+  report.noFusion = [mother.pattern, father.pattern];
+  if (hasFewDecorations(terrarium) && chance(FEW_DECORATIONS_IUSTUS_CHANCE, random)) return "iustus";
   return pick([mother.pattern, father.pattern], random);
 }
 
@@ -59,7 +63,7 @@ function inheritDetail(mother: Genome, father: Genome, terrarium: Terrarium, ran
  * Pattern by fusion, detail influenced by the terrarium's decorations.
  */
 export function breed(mother: Genome, father: Genome, terrarium: Terrarium, random: Random = Math.random): BirthReport {
-  const report: BirthReport = { genome: mother, mutations: [], fusion: null };
+  const report: BirthReport = { genome: mother, mutations: [], fusion: null, noFusion: null };
   const primary = inheritColor(pick([mother.primary, father.primary], random), random, report.mutations);
 
   const pool = [mother.secondary, father.secondary].filter((c) => !samePair(c, primary));
