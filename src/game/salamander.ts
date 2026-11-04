@@ -1,6 +1,6 @@
-import { COLORS, type ColorId } from "../data/colors";
-import type { DetailId } from "../data/details";
-import { PATTERNS, type PatternId } from "../data/patterns";
+import { COLOR_IDS, COLORS, type ColorId } from "../data/colors";
+import { DETAIL_IDS, type DetailId } from "../data/details";
+import { PATTERN_IDS, PATTERNS, type PatternId } from "../data/patterns";
 
 /** The four genes of a salamander (see doc/GDD.md, "Genetics"). */
 export interface Genome {
@@ -45,6 +45,8 @@ export interface Salamander {
   };
 }
 
+const capitalize = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
+
 /**
  * Latin species name (see doc/GDD.md, "Species names"):
  * primary color (-us), secondary color + pattern (-o + -ata), detail (-um), e.g. "Albus Rubeopunctata Cornum".
@@ -56,5 +58,30 @@ export function speciesName({ primary, secondary, pattern, detail }: Genome): st
     pattern === "iustus" ? PATTERNS.iustus.latin : COLORS[secondary].prefix + PATTERNS[pattern].latin,
   ];
   if (detail !== "none") words.push(detail);
-  return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+  return words.map(capitalize).join(" ");
+}
+
+
+/**
+ * Genome described by a species name, or null if the name is not valid.
+ * Without a pattern the secondary color is hidden: any color other than the primary is returned.
+ */
+export function parseSpeciesName(name: string): Genome | null {
+  const [first, second, third] = name.split(" ");
+  const primary = COLOR_IDS.find((c) => capitalize(COLORS[c].latin) === first);
+  if (!primary || !second) return null;
+  const detail = third === undefined ? "none" : DETAIL_IDS.find((d) => d !== "none" && capitalize(d) === third);
+  if (!detail) return null;
+  if (second === capitalize(PATTERNS.iustus.latin)) {
+    const secondary = COLOR_IDS.find((c) => c !== primary) ?? primary;
+    return { primary, secondary, pattern: "iustus", detail };
+  }
+  for (const secondary of COLOR_IDS) {
+    for (const pattern of PATTERN_IDS) {
+      if (pattern !== "iustus" && capitalize(COLORS[secondary].prefix + PATTERNS[pattern].latin) === second) {
+        return { primary, secondary, pattern, detail };
+      }
+    }
+  }
+  return null;
 }

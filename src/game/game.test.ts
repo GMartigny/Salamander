@@ -105,9 +105,9 @@ describe("game", () => {
       stage: "adult",
       stageSince: 0,
     });
-    terrarium.inhabitants.push(adult("female"), adult("female"), adult("male"));
+    const females = [adult("female"), adult("female")];
+    terrarium.inhabitants.push(...females, adult("male"));
     advance(state, 6 * 60 * SECOND, random);
-    const females = terrarium.inhabitants.filter((s) => s.sex === "female" && s.stage === "adult");
     expect(females.every((f) => f.restUntil !== undefined || f.pregnancy)).toBe(true);
     expect(terrarium.inhabitants.some((s) => s.stage !== "adult")).toBe(true);
   });

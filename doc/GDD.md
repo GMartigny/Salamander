@@ -237,6 +237,9 @@ A single currency, **coins** (working name), is used for all purchases and sales
 
 A decoration can be sold back for 50% of everything spent on it (purchase and upgrades).
 - **Special orders**: one or more salamanders with specific traits to deliver within a time limit, for an attractive coin reward.
+    - 2 orders are open at a time; an expired or delivered order is replaced right away.
+    - Each order asks for 1 salamander (sometimes 2), each with 2 required traits among body color, pattern color and pattern. Colors are common ones or ones the player has already found.
+    - It lasts 30 minutes. Reward: 3 × 20 coins × the rarity factor of each required trait (about 120 coins for two common traits).
 
 ### Market
 
@@ -271,6 +274,8 @@ The player always has a goal at each of three horizons, and the encyclopedia car
 
 Each collection groups 2 to 8 specific salamanders that refer to a real group. A salamander belongs to at most one collection. The full list, with the species name of each member, is in the "Collections" tab of the "Espèces" spreadsheet: 24 collections, 105 salamanders.
 
+A collection is complete when every member has been discovered (owned as an adult once). The player then claims its reward, once: twice the sum of its members' purchase prices, in coins.
+
 Examples: ninja salamanders, the plumbers, traffic light, European flags, rasta, rainbow, Halloween, Christmas, the four elements, solar system, gemstones, coats (zebra, tiger, leopard…), insects, sentai, blue elves, the seven dwarfs, maze ghosts, Olympic rings, podium, fruit basket, yin and yang, made-up rockers, helmeted duo, antenna toddlers.
 
 If the game goes public, avoid trademarked names ("the plumbers" rather than the characters' names).
@@ -289,9 +294,8 @@ Temporary values used by the first playable version, to tune by playing.
 | Selling price | 50% of the purchase price |
 | Starting coins | 220 (a small terrarium and a common pair) |
 | Market | 4 specimens (always a common female and male, plus 2 drawn by rarity), 3 decorations, new offer every 5 minutes, delivery in 30 seconds |
-| Themed collection reward | Coins only |
-
-The prototype leaves out special orders and themed collections.
+| Themed collection reward | Coins only: twice the sum of its members' purchase prices |
+| Special orders | 2 open, 30 minutes each, reward 3 × 20 × rarity factors of the required traits |
 
 ## Technical and open points
 

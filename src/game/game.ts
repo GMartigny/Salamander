@@ -16,6 +16,7 @@ import type { DecorationType } from "../data/decorations";
 import { DETAIL_IDS } from "../data/details";
 import { PATTERN_IDS } from "../data/patterns";
 import { breed } from "./genetics";
+import { refreshOrders } from "./goals";
 import { refreshMarket } from "./market";
 import { pick, type Random } from "./random";
 import { sellPrice } from "./rarity";
@@ -37,12 +38,15 @@ export function newGame(now: number, random: Random = Math.random): GameState {
     discoveredLinks: [],
     discoveredRecipes: [],
     triedWithoutResult: [],
+    orders: [],
+    claimedCollections: [],
     decorationsSeen: {},
     hasMated: false,
     nextId: 0,
     lastTick: now,
   };
   refreshMarket(state, now, random);
+  refreshOrders(state, now, random);
   return state;
 }
 
@@ -175,6 +179,7 @@ export function advance(state: GameState, now: number, random: Random = Math.ran
   }
 
   for (const terrarium of state.terrariums) advanceTerrarium(state, terrarium, now, random);
+  refreshOrders(state, now, random);
   state.lastTick = now;
 }
 

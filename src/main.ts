@@ -37,9 +37,21 @@ import { adultMales, capacity, happiness, type Terrarium } from "./game/terrariu
 import { COLOR_IDS } from "./data/colors";
 import { discoveryMapSvg, recipesList, TOTAL_LINKS } from "./render/discovery";
 import { MARKET } from "./data/balance";
+import { COLLECTIONS } from "./data/collections";
+import { COLORS } from "./data/colors";
+import { PATTERNS } from "./data/patterns";
+import {
+  claimCollection,
+  collectionProgress,
+  collectionReward,
+  deliverOrder,
+  orderCandidates,
+  type Requirement,
+} from "./game/goals";
+import { COLOR_HEX } from "./render/salamander";
 import { salamanderSvg } from "./render/salamander";
 
-type Tab = "terrariums" | "market" | "encyclopedia";
+type Tab = "terrariums" | "market" | "goals" | "encyclopedia";
 
 let state: GameState = load() ?? newGame(Date.now());
 advance(state, Date.now());
@@ -50,6 +62,8 @@ const ui = {
   /** Chosen terrarium for each market offer, kept across renders. */
   targets: {} as Record<string, string>,
   toast: "",
+  /** Collections expanded in the Goals tab, kept across renders. */
+  openCollections: new Set<string>(),
 };
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
@@ -200,6 +214,51 @@ function marketView(): string {
     <div class="grid">${decorations || `<p class="meta">Sold out until the next offer.</p>`}</div>`;
 }
 
+function swatch(color: keyof typeof COLORS): string {
+  return `<span class="swatch" style="background:${COLOR_HEX[color]}"></span>${COLORS[color].name}`;
+}
+
+function requirementText(r: Requirement): string {
+  const parts: string[] = [];
+  if (r.primary) parts.push(`Body ${swatch(r.primary)}`);
+  if (r.secondary) parts.push(`Pattern color ${swatch(r.secondary)}`);
+  if (r.pattern) parts.push(`Pattern <strong>${PATTERNS[r.pattern].name}</strong>`);
+  return parts.join(" · ");
+}
+
+function goalsView(): string {
+  const orders = (state.orders ?? [])
+    .map((o) => {
+      const ready = orderCandidates(state, o) !== null;
+      return `<div class="card">
+        <div class="name">Order · ${fmt(o.reward)} 🪙</div>
+        <ul class="requirements">${o.requirements.map((r) => `<li>${requirementText(r)}</li>`).join("")}</ul>
+        <div class="meta">Expires in ${timer(o.expiresAt)}</div>
+        <button class="primary" data-action="deliver" data-id="${o.id}" ${ready ? "" : "disabled"}>${ready ? "Deliver" : "Missing salamanders"}</button>
+      </div>`;
+    })
+    .join("");
+  const claimed = new Set(state.claimedCollections ?? []);
+  const collections = COLLECTIONS.map((c) => {
+    const done = collectionProgress(state, c);
+    const complete = done === c.members.length;
+    const action = claimed.has(c.id)
+      ? `<div class="meta">✓ Reward claimed</div>`
+      : `<button class="primary" data-action="claim" data-id="${c.id}" ${complete ? "" : "disabled"}>Claim ${fmt(collectionReward(c))} 🪙</button>`;
+    return `<details class="card collection" data-collection="${c.id}" ${ui.openCollections.has(c.id) ? "open" : ""}>
+      <summary><span class="name">${c.name}</span> <span class="meta">${done} / ${c.members.length}</span></summary>
+      <ul class="species">${c.members.map((m) => `<li class="${state.discovered.includes(m) ? "found" : ""}">${state.discovered.includes(m) ? m : "???"}</li>`).join("")}</ul>
+      ${action}
+    </details>`;
+  }).join("");
+  return `<h2>Special orders</h2>
+    <p class="meta">Deliver adults with the requested traits before the order expires.</p>
+    <div class="orders">${orders}</div>
+    <h2>Collections</h2>
+    <p class="meta">${claimed.size} / ${COLLECTIONS.length} completed. Discover every member to claim the reward.</p>
+    ${collections}`;
+}
+
 function encyclopediaView(): string {
   const found = state.discovered.length;
   const seen = Object.keys(state.decorationsSeen).length;
@@ -225,14 +284,14 @@ function encyclopediaView(): string {
 }
 
 function render(): void {
-  const views = { terrariums: terrariumsView, market: marketView, encyclopedia: encyclopediaView };
+  const views = { terrariums: terrariumsView, market: marketView, goals: goalsView, encyclopedia: encyclopediaView };
   app.innerHTML = `
     <header class="top"><h1>Salamanders</h1><div class="coins">${fmt(state.coins)} 🪙</div></header>
     <main>${views[ui.tab]()}</main>
     ${ui.toast ? `<div class="toast">${ui.toast}</div>` : ""}
     <nav class="tabs">
-      ${(["terrariums", "market", "encyclopedia"] as const)
-        .map((t) => `<button data-action="tab" data-tab="${t}" class="${ui.tab === t ? "active" : ""}">${{ terrariums: "🏠 Terrariums", market: "🛒 Market", encyclopedia: "📖 Species" }[t]}</button>`)
+      ${(["terrariums", "market", "goals", "encyclopedia"] as const)
+        .map((t) => `<button data-action="tab" data-tab="${t}" class="${ui.tab === t ? "active" : ""}">${{ terrariums: "🏠 Home", market: "🛒 Market", goals: "🎯 Goals", encyclopedia: "📖 Species" }[t]}</button>`)
         .join("")}
     </nav>`;
 }
@@ -243,6 +302,18 @@ function commit(error: string | null = null): void {
   save(state);
   render();
 }
+
+app.addEventListener(
+  "toggle",
+  (event) => {
+    const details = event.target as HTMLDetailsElement;
+    const id = details.dataset.collection;
+    if (!id) return;
+    if (details.open) ui.openCollections.add(id);
+    else ui.openCollections.delete(id);
+  },
+  true,
+);
 
 app.addEventListener("change", (event) => {
   const select = event.target as HTMLSelectElement;
@@ -256,6 +327,10 @@ app.addEventListener("click", (event) => {
   const { action, id = "", to = "", type = "", tab } = el.dataset;
   const now = Date.now();
   switch (action) {
+    case "deliver":
+      return commit(deliverOrder(state, id, now));
+    case "claim":
+      return commit(claimCollection(state, id));
     case "tab":
       ui.tab = tab as Tab;
       ui.selected = null;
@@ -294,6 +369,7 @@ function fingerprint(): string {
   return JSON.stringify([
     state.coins,
     state.market.refreshedAt,
+    (state.orders ?? []).map((o) => o.id),
     state.deliveries.length,
     state.terrariums.map((t) => t.inhabitants.map((s) => [s.stage, !!s.pregnancy, s.nextMatingAt == null, (s.restUntil ?? 0) > Date.now()])),
   ]);

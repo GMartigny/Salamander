@@ -1,5 +1,6 @@
 import type { DecorationQuality } from "../data/balance";
 import type { DecorationTheme, DecorationType } from "../data/decorations";
+import type { Order } from "./goals";
 import type { Genome, Salamander, Sex } from "./salamander";
 import type { Terrarium } from "./terrarium";
 
@@ -43,6 +44,10 @@ export interface GameState {
   discoveredRecipes: string[];
   /** Pattern pairs tried that have no recipe, as "a+b" with the two parents sorted. */
   triedWithoutResult: string[];
+  /** Special orders currently open. */
+  orders: Order[];
+  /** Ids of the themed collections whose reward was claimed. */
+  claimedCollections: string[];
   /** Highest quality reached for each decoration, keyed "theme:type". */
   decorationsSeen: Record<string, DecorationQuality>;
   /** Whether the very first mating of the game has happened. */

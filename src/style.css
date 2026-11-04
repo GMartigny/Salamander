@@ -289,3 +289,43 @@ meter {
   padding-left: 18px;
   font-size: 13px;
 }
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin: 0 4px 0 2px;
+  border: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.orders {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.requirements {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.collection {
+  margin-bottom: 8px;
+}
+
+.collection summary {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+
+.species li:not(.found) {
+  color: var(--muted);
+}
+
+.tabs button {
+  padding: 6px 4px;
+}

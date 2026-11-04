@@ -105,3 +105,14 @@ export const MARKET = {
   decorations: 3,
   delivery: 30 * SECOND,
 } as const;
+
+export const ORDERS = {
+  /** Orders open at the same time. */
+  slots: 2,
+  duration: 30 * MINUTE,
+  /** Reward = this factor × the base price × the rarity factors of the required traits, per salamander. */
+  rewardFactor: 3,
+} as const;
+
+/** Collection reward = this factor × the sum of its members' purchase prices. */
+export const COLLECTION_REWARD_FACTOR = 2;
