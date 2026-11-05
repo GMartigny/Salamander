@@ -39,17 +39,35 @@ function weightedGenome(random: Random): Genome {
   return { primary, secondary, pattern, detail };
 }
 
-/** New market offer: always a common male and female, then specimens drawn by rarity, and decorations. */
+/** Draws until the value differs from every one already taken (by key). */
+function unique<T>(taken: T[], key: (value: T) => string, draw: () => T): T {
+  const keys = new Set(taken.map(key));
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const value = draw();
+    if (!keys.has(key(value))) return value;
+  }
+  return draw();
+}
+
+const specimenKey = ({ genome, sex }: { genome: Genome; sex: Sex }) => `${genome.primary}|${genome.secondary}|${genome.pattern}|${genome.detail}|${sex}`;
+const decorationKey = ({ type, theme }: { type: string; theme: string }) => `${theme}:${type}`;
+
+/** New market offer: always a common male and female, then specimens drawn by rarity, and decorations; never twice the exact same offer. */
 export function refreshMarket(state: GameState, now: number, random: Random): void {
-  const specimens = Array.from({ length: MARKET.specimens }, (_, i) => {
-    const genome = i < MARKET.lowRarity ? commonGenome(random) : weightedGenome(random);
-    const sex: Sex = i < MARKET.lowRarity ? (i === 0 ? "female" : "male") : pick(["female", "male"] as const, random);
-    return { id: newId(state, "o"), genome, sex, price: specimenPrice(genome) };
-  });
-  const decorations = Array.from({ length: MARKET.decorations }, () => ({
-    id: newId(state, "d"),
-    type: pick(DECORATION_TYPES, random),
-    theme: pick(DECORATION_THEMES, random),
-  }));
+  const drawn: { genome: Genome; sex: Sex }[] = [];
+  for (let i = 0; i < MARKET.specimens; i++) {
+    drawn.push(
+      unique(drawn, specimenKey, () => ({
+        genome: i < MARKET.lowRarity ? commonGenome(random) : weightedGenome(random),
+        sex: i < MARKET.lowRarity ? (i === 0 ? "female" : "male") : pick(["female", "male"] as const, random),
+      })),
+    );
+  }
+  const specimens = drawn.map(({ genome, sex }) => ({ id: newId(state, "o"), genome, sex, price: specimenPrice(genome) }));
+  const kinds: { type: (typeof DECORATION_TYPES)[number]; theme: (typeof DECORATION_THEMES)[number] }[] = [];
+  for (let i = 0; i < MARKET.decorations; i++) {
+    kinds.push(unique(kinds, decorationKey, () => ({ type: pick(DECORATION_TYPES, random), theme: pick(DECORATION_THEMES, random) })));
+  }
+  const decorations = kinds.map((k) => ({ id: newId(state, "d"), ...k }));
   state.market = { specimens, decorations, refreshedAt: now };
 }

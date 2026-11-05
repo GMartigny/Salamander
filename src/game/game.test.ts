@@ -60,6 +60,17 @@ describe("game", () => {
     expect(STARTING_COINS).toBeGreaterThanOrEqual(terrariumPrice("small", 1) + (female?.price ?? 0) + (male?.price ?? 0));
   });
 
+  it("never offers the exact same specimen or decoration twice", () => {
+    const random = seeded(8);
+    for (let i = 0; i < 300; i++) {
+      const { market } = newGame(0, random);
+      const specimens = market.specimens.map((o) => JSON.stringify([o.genome, o.sex]));
+      const decorations = market.decorations.map((o) => `${o.theme}:${o.type}`);
+      expect(new Set(specimens).size).toBe(specimens.length);
+      expect(new Set(decorations).size).toBe(decorations.length);
+    }
+  });
+
   it("delivers, lays a first egg quickly and raises it to adulthood", () => {
     const random = seeded(3);
     const state = newGame(0, random);
