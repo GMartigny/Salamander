@@ -107,7 +107,7 @@ function salamanderCard(s: Salamander, terrarium: Terrarium): string {
   return `<div class="card salamander-card ${selected ? "selected" : ""}" data-action="select" data-id="${s.id}">
     ${salamanderSvg(s.genome, s.stage)}
     <div class="name">${name}</div>
-    <div class="meta">${s.sex === "female" ? "♀" : "♂"} · ${STAGE_NAMES[s.stage]}${end ? ` · ${timer(end)}` : ""}</div>
+    <div class="meta">${s.stage === "egg" ? "" : `${s.sex === "female" ? "♀" : "♂"} · `}${STAGE_NAMES[s.stage]}${end ? ` · ${timer(end)}` : ""}</div>
     ${femaleStatus(s, terrarium)}
     ${actions}
   </div>`;
