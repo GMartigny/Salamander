@@ -244,7 +244,7 @@ A decoration can be sold back for 50% of everything spent on it (purchase and up
 
 ### Market
 
-The market has two sections, and both offers rotate every 5 minutes. An offer never contains the exact same item twice (same genes and sex for a specimen, same theme and type for a decoration).
+The market has two sections, and both offers rotate every 5 minutes. An offer never contains the exact same item twice (same genes and sex for a specimen, same theme and type for a decoration). The target terrarium is chosen once per section (specimens or decorations). A decoration offer warns when it would replace the decoration of the same type in the target, and cannot be bought if the target already has the same one.
 
 - **Specimens**: random salamanders, delivered after a short delay. They help diversify genes.
 - **Terrariums**:

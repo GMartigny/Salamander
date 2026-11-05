@@ -32,7 +32,7 @@ import {
 import { sellPrice } from "./game/rarity";
 import { type Salamander, speciesName } from "./game/salamander";
 import { load, reset, save } from "./game/save";
-import type { GameState } from "./game/state";
+import type { DecorationOffer, GameState } from "./game/state";
 import { adultMales, capacity, happiness, type Terrarium } from "./game/terrarium";
 import { COLOR_IDS } from "./data/colors";
 import { discoveryMapSvg, recipesList, TOTAL_LINKS } from "./render/discovery";
@@ -172,19 +172,35 @@ function terrariumsView(): string {
     .join("");
 }
 
-function targetSelect(offerId: string, needsRoom: boolean): string {
+type TargetCategory = "specimen" | "decoration";
+
+/** Terrarium a market category delivers to; shared by every offer of that category. */
+function targetOf(category: TargetCategory, needsRoom: boolean): Terrarium | undefined {
   const options = state.terrariums.filter((t) => !needsRoom || hasRoom(state, t));
-  if (!options.length) return "";
-  const current = ui.targets[offerId] && options.some((t) => t.id === ui.targets[offerId]) ? ui.targets[offerId] : options[0]!.id;
-  ui.targets[offerId] = current;
-  return `<select data-target-for="${offerId}">${options.map((t) => `<option value="${t.id}" ${t.id === current ? "selected" : ""}>Terrarium #${t.rank}</option>`).join("")}</select>`;
+  return options.find((t) => t.id === ui.targets[category]) ?? options[0];
+}
+
+function targetSelect(category: TargetCategory, needsRoom: boolean): string {
+  const options = state.terrariums.filter((t) => !needsRoom || hasRoom(state, t));
+  const current = targetOf(category, needsRoom);
+  if (!current) return "";
+  return `<select data-target-for="${category}">${options.map((t) => `<option value="${t.id}" ${t.id === current.id ? "selected" : ""}>Terrarium #${t.rank}</option>`).join("")}</select>`;
+}
+
+/** What buying a decoration would do to the targeted terrarium. */
+function decorationNote(o: DecorationOffer, target: Terrarium | undefined): { text: string; blocked: boolean } {
+  const existing = target?.decorations.find((d) => d.type === o.type);
+  if (!existing) return { text: "", blocked: false };
+  const name = `${DECORATION_THEME_NAMES[existing.theme]} ${DECORATION_TYPE_NAMES[existing.type].toLowerCase()} ${"★".repeat(existing.quality)}`;
+  if (existing.theme === o.theme) return { text: `⚠️ Already in this terrarium (${name})`, blocked: true };
+  return { text: `⚠️ Replaces the ${name}`, blocked: false };
 }
 
 function marketView(): string {
   const canBuyTerrarium = state.terrariums.length < MAX_TERRARIUMS;
   const specimens = state.market.specimens
     .map((o) => {
-      const select = targetSelect(o.id, true);
+      const select = targetSelect("specimen", true);
       return `<div class="card">
         ${salamanderSvg(o.genome, "adult", o.sex)}
         <div class="name">${speciesName(o.genome)}</div>
@@ -195,11 +211,13 @@ function marketView(): string {
     .join("");
   const decorations = state.market.decorations
     .map((o) => {
-      const select = targetSelect(o.id, false);
+      const select = targetSelect("decoration", false);
+      const note = decorationNote(o, targetOf("decoration", false));
       return `<div class="card deco theme-${o.theme}">
         <div class="name">${DECORATION_THEME_NAMES[o.theme]} ${DECORATION_TYPE_NAMES[o.type].toLowerCase()}</div>
-        <div class="meta">${fmt(DECORATION_PRICES.purchase)} 🪙 · replaces the ${DECORATION_TYPE_NAMES[o.type].toLowerCase()}</div>
-        ${select ? `${select}<button class="primary" data-action="buy-deco" data-id="${o.id}">Buy</button>` : `<div class="meta">Needs a terrarium</div>`}
+        <div class="meta">${fmt(DECORATION_PRICES.purchase)} 🪙</div>
+        ${note.text ? `<div class="warning">${note.text}</div>` : ""}
+        ${select ? `${select}<button class="primary" data-action="buy-deco" data-id="${o.id}" ${note.blocked ? "disabled" : ""}>Buy</button>` : `<div class="meta">Needs a terrarium</div>`}
       </div>`;
     })
     .join("");
@@ -318,7 +336,9 @@ app.addEventListener(
 
 app.addEventListener("change", (event) => {
   const select = event.target as HTMLSelectElement;
-  if (select.dataset.targetFor) ui.targets[select.dataset.targetFor] = select.value;
+  if (!select.dataset.targetFor) return;
+  ui.targets[select.dataset.targetFor] = select.value;
+  render();
 });
 
 app.addEventListener("click", (event) => {
@@ -350,9 +370,9 @@ app.addEventListener("click", (event) => {
     case "upgrade-terrarium":
       return commit(upgradeTerrarium(state, id, now));
     case "buy-specimen":
-      return commit(buySpecimen(state, id, ui.targets[id] ?? "", now));
+      return commit(buySpecimen(state, id, targetOf("specimen", true)?.id ?? "", now));
     case "buy-deco":
-      return commit(buyDecoration(state, id, ui.targets[id] ?? ""));
+      return commit(buyDecoration(state, id, targetOf("decoration", false)?.id ?? ""));
     case "sell-deco":
       return commit(sellDecoration(state, id, type as DecorationType));
     case "upgrade-deco":

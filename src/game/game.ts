@@ -288,6 +288,7 @@ export function buyDecoration(state: GameState, offerId: string, terrariumId: st
   const offer = state.market.decorations.find((o) => o.id === offerId);
   const terrarium = findTerrarium(state, terrariumId);
   if (!offer || !terrarium) return "Unavailable";
+  if (terrarium.decorations.some((d) => d.type === offer.type && d.theme === offer.theme)) return "This terrarium already has it";
   const error = spend(state, DECORATION_PRICES.purchase);
   if (error) return error;
   state.market.decorations.splice(state.market.decorations.indexOf(offer), 1);

@@ -334,3 +334,8 @@ meter {
   font-style: italic;
   font-weight: 600;
 }
+
+.warning {
+  font-size: 12px;
+  color: #b9770e;
+}
