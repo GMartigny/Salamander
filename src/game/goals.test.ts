@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { COLLECTIONS } from "../data/collections";
 import { newGame } from "./game";
-import { claimCollection, collectionReward, deliverOrder, matches, refreshOrders } from "./goals";
+import { claimCollection, collectionReward, deliverOrder, matches, refreshOrders, requirementName } from "./goals";
 import { parseSpeciesName, type Salamander, speciesName } from "./salamander";
 
 const adult = (name: string): Salamander => ({
@@ -55,5 +55,11 @@ describe("orders", () => {
     expect(state.coins - coins).toBe(120);
     expect(state.terrariums[0]!.inhabitants).toHaveLength(0);
     expect(state.orders).toHaveLength(2);
+  });
+
+  it("shows the expected species name with free traits as *", () => {
+    expect(requirementName({ primary: "red", pattern: "puncta" })).toBe("Rubeus *punctata");
+    expect(requirementName({ primary: "red", secondary: "white" })).toBe("Rubeus Albo*");
+    expect(requirementName({ secondary: "white", pattern: "puncta" })).toBe("* Albopunctata");
   });
 });

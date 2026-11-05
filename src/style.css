@@ -329,3 +329,8 @@ meter {
 .tabs button {
   padding: 6px 4px;
 }
+
+.latin {
+  font-style: italic;
+  font-weight: 600;
+}

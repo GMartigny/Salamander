@@ -128,3 +128,13 @@ export function claimCollection(state: GameState, collectionId: string): string 
   state.coins += collectionReward(collection);
   return null;
 }
+
+/** Species name pattern an order expects, with "*" for the traits left free, e.g. "Rubeus *punctata". */
+export function requirementName(requirement: Requirement): string {
+  const capitalize = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
+  const first = requirement.primary ? capitalize(COLORS[requirement.primary].latin) : "*";
+  const prefix = requirement.secondary ? COLORS[requirement.secondary].prefix : "*";
+  const pattern = requirement.pattern ? PATTERNS[requirement.pattern].latin : "*";
+  const second = prefix === "*" && pattern === "*" ? "*" : capitalize(prefix + pattern);
+  return `${first} ${second}`;
+}

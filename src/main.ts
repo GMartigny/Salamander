@@ -47,6 +47,7 @@ import {
   deliverOrder,
   orderCandidates,
   type Requirement,
+  requirementName,
 } from "./game/goals";
 import { COLOR_HEX } from "./render/salamander";
 import { salamanderSvg } from "./render/salamander";
@@ -232,7 +233,7 @@ function goalsView(): string {
       const ready = orderCandidates(state, o) !== null;
       return `<div class="card">
         <div class="name">Order · ${fmt(o.reward)} 🪙</div>
-        <ul class="requirements">${o.requirements.map((r) => `<li>${requirementText(r)}</li>`).join("")}</ul>
+        <ul class="requirements">${o.requirements.map((r) => `<li><span class="latin">${requirementName(r)}</span><br>${requirementText(r)}</li>`).join("")}</ul>
         <div class="meta">Expires in ${timer(o.expiresAt)}</div>
         <button class="primary" data-action="deliver" data-id="${o.id}" ${ready ? "" : "disabled"}>${ready ? "Deliver" : "Missing salamanders"}</button>
       </div>`;
@@ -247,7 +248,7 @@ function goalsView(): string {
       : `<button class="primary" data-action="claim" data-id="${c.id}" ${complete ? "" : "disabled"}>Claim ${fmt(collectionReward(c))} 🪙</button>`;
     return `<details class="card collection" data-collection="${c.id}" ${ui.openCollections.has(c.id) ? "open" : ""}>
       <summary><span class="name">${c.name}</span> <span class="meta">${done} / ${c.members.length}</span></summary>
-      <ul class="species">${c.members.map((m) => `<li class="${state.discovered.includes(m) ? "found" : ""}">${state.discovered.includes(m) ? m : "???"}</li>`).join("")}</ul>
+      <ul class="species">${c.members.map((m) => `<li class="${state.discovered.includes(m) ? "found" : ""}">${state.discovered.includes(m) ? "✓ " : ""}${m}</li>`).join("")}</ul>
       ${action}
     </details>`;
   }).join("");
