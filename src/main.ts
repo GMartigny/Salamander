@@ -105,7 +105,7 @@ function salamanderCard(s: Salamander, terrarium: Terrarium): string {
     : "";
   const name = s.stage === "adult" ? speciesName(s.genome) : "???";
   return `<div class="card salamander-card ${selected ? "selected" : ""}" data-action="select" data-id="${s.id}">
-    ${salamanderSvg(s.genome, s.stage)}
+    ${salamanderSvg(s.genome, s.stage, s.sex)}
     <div class="name">${name}</div>
     <div class="meta">${s.stage === "egg" ? "" : `${s.sex === "female" ? "♀" : "♂"} · `}${STAGE_NAMES[s.stage]}${end ? ` · ${timer(end)}` : ""}</div>
     ${femaleStatus(s, terrarium)}
@@ -163,7 +163,7 @@ function terrariumsView(): string {
           ${t.inhabitants.map((s) => salamanderCard(s, t)).join("")}
           ${deliveries
             .map(
-              (d) => `<div class="card salamander-card pending">${salamanderSvg(d.salamander.genome)}<div class="name">${speciesName(d.salamander.genome)}</div><div class="meta">Arriving in ${timer(d.arrivesAt)}</div></div>`,
+              (d) => `<div class="card salamander-card pending">${salamanderSvg(d.salamander.genome, "adult", d.salamander.sex)}<div class="name">${speciesName(d.salamander.genome)}</div><div class="meta">Arriving in ${timer(d.arrivesAt)}</div></div>`,
             )
             .join("")}
         </div>
@@ -186,7 +186,7 @@ function marketView(): string {
     .map((o) => {
       const select = targetSelect(o.id, true);
       return `<div class="card">
-        ${salamanderSvg(o.genome)}
+        ${salamanderSvg(o.genome, "adult", o.sex)}
         <div class="name">${speciesName(o.genome)}</div>
         <div class="meta">${o.sex === "female" ? "♀" : "♂"} · ${fmt(o.price)} 🪙</div>
         ${select ? `${select}<button class="primary" data-action="buy-specimen" data-id="${o.id}">Buy</button>` : `<div class="meta">Needs a terrarium with room</div>`}

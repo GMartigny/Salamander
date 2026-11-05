@@ -1,6 +1,6 @@
 import type { ColorId } from "../data/colors";
 import type { PatternId } from "../data/patterns";
-import type { Genome, Stage } from "../game/salamander";
+import type { Genome, Sex, Stage } from "../game/salamander";
 
 /** Display color of each gene color. */
 export const COLOR_HEX: Record<ColorId, string> = {
@@ -47,7 +47,26 @@ function shape(tag: string, attrs: string, color: ColorId): string {
 
 const HEAD = 'cx="50" cy="22" rx="13" ry="12"';
 const BODY = 'cx="50" cy="56" rx="14" ry="24"';
+/** Females are a little plumper, as in many newts and salamanders. */
+const FEMALE_BODY = 'cx="50" cy="56" rx="16" ry="24"';
 const TAIL = 'd="M42 74 Q46 104 50 116 Q54 104 58 74 Z"';
+
+/** Longer tail with a growing S-wave, after the wavy tail fin of breeding male newts. */
+function wavyTail(): string {
+  const steps = 24;
+  const left: string[] = [];
+  const right: string[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const y = 74 + 43 * t;
+    const x = 50 + 5 * Math.sin(2.4 * Math.PI * t) * t;
+    const half = 8 * (1 - t) + 0.4;
+    left.push(`${(x - half).toFixed(1)} ${y.toFixed(1)}`);
+    right.unshift(`${(x + half).toFixed(1)} ${y.toFixed(1)}`);
+  }
+  return `d="M${left.join(" L")} L${right.join(" L")} Z"`;
+}
+const MALE_TAIL = wavyTail();
 const LEGS = [
   'cx="35" cy="42" rx="8" ry="3.5" transform="rotate(-25 35 42)"',
   'cx="65" cy="42" rx="8" ry="3.5" transform="rotate(25 65 42)"',
@@ -61,7 +80,18 @@ const FEET = [
   [72, 74],
 ] as const;
 
-function silhouette(color: ColorId, outline = true): string {
+interface Shapes {
+  body: string;
+  tail: string;
+}
+
+function shapesFor(sex?: Sex): Shapes {
+  if (sex === "male") return { body: BODY, tail: MALE_TAIL };
+  if (sex === "female") return { body: FEMALE_BODY, tail: TAIL };
+  return { body: BODY, tail: TAIL };
+}
+
+function silhouette(color: ColorId, { body: BODY, tail: TAIL }: Shapes, outline = true): string {
   const line = outline ? OUTLINE : "";
   return [
     shape("path", `${TAIL} ${line}`, color),
@@ -175,7 +205,7 @@ function patternShapes(pattern: PatternId, s: ColorId, primary: ColorId, id: str
 }
 
 /** SVG markup of a salamander seen from above, drawn from its genome. */
-export function salamanderSvg(genome: Genome, stage: Stage = "adult"): string {
+export function salamanderSvg(genome: Genome, stage: Stage = "adult", sex?: Sex): string {
   uid += 1;
   const id = `sal${uid}`;
   const { primary, secondary, pattern, detail } = genome;
@@ -189,8 +219,10 @@ export function salamanderSvg(genome: Genome, stage: Stage = "adult"): string {
     </svg>`;
   }
 
-  const clip = `<clipPath id="${id}c"><ellipse ${HEAD}/><ellipse ${BODY}/><path ${TAIL}/></clipPath>`;
-  let body = silhouette(primary);
+  const shapes = shapesFor(sex);
+  const BODY = shapes.body;
+  const clip = `<clipPath id="${id}c"><ellipse ${HEAD}/><ellipse ${BODY}/><path ${shapes.tail}/></clipPath>`;
+  let body = silhouette(primary, shapes);
   if (pattern === "gamba") {
     body += [...LEGS.map((l) => shape("ellipse", `${l} ${OUTLINE}`, secondary)), ...FEET.map(([x, y]) => shape("circle", `cx="${x}" cy="${y}" r="2.6"`, secondary))].join("");
     body += shape("ellipse", `${BODY} ${OUTLINE}`, primary) + shape("ellipse", `${HEAD} ${OUTLINE}`, primary);

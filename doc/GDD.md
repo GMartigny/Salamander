@@ -184,6 +184,7 @@ The terrarium is the breeding pen: the player chooses crosses by distributing ma
 5. **Adult**: final stage; the salamander never dies.
 
 - Salamanders have a sex. If several pairs are possible in a terrarium, the male/female pair is drawn at random. Isolating a single pair forces a specific cross.
+- Males and females look slightly different, as in real newts: males have a longer, wavy tail (like the tail fin of breeding male newts), females a slightly plumper body. Eggs show no difference.
 - A full terrarium produces no more eggs: pregnant females wait for a free slot. To continue, the player sells or moves salamanders, or buys a terrarium.
 - While offline, laying continues until the terrariums are full: a natural limit, with no artificial friction.
 
