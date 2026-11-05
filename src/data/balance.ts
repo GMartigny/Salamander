@@ -102,7 +102,7 @@ export const MARKET = {
   specimens: 4,
   /** Low-rarity specimens always offered: one male and one female. */
   lowRarity: 2,
-  decorations: 3,
+  decorations: 4,
   delivery: 30 * SECOND,
 } as const;
 

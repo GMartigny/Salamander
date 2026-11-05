@@ -293,7 +293,7 @@ Temporary values used by the first playable version, to tune by playing.
 | Price multiplier with a detail | ×3 |
 | Selling price | 50% of the purchase price |
 | Starting coins | 220 (a small terrarium and a common pair) |
-| Market | 4 specimens (always a common female and male, plus 2 drawn by rarity), 3 decorations, new offer every 5 minutes, delivery in 30 seconds |
+| Market | 4 specimens (always a common female and male, plus 2 drawn by rarity), 4 decorations, new offer every 5 minutes, delivery in 30 seconds |
 | Themed collection reward | Coins only: twice the sum of its members' purchase prices |
 | Special orders | 2 open, 30 minutes each, reward 3 × 20 × rarity factors of the required traits |
 
